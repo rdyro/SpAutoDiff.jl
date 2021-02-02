@@ -5,7 +5,8 @@ function lse(x::AbstractArray{T,1}; scale::Real = 1) where {T}
   return log(sum(exp.(scale * (x .- xmax)))) / scale + xmax
 end
 
-function lsemaxish(x::AbstractArray{T,1}, nb::Int; scale::Real = 1) where {T}
+function lsemaxish(x::AbstractArray{T,1}, nb::Real; scale::Real = 1) where {T}
+  nb = Int(nb)
   @assert 1 <= nb <= length(x)
   pidx = sortperm(x)
   @views pidx_ = pidx[(end - nb + 1):end]
@@ -17,7 +18,7 @@ function lseminish(x::AbstractArray{T,1}; scale::Real = 1) where {T}
   return -lsemaxish(-x; scale = scale)
 end
 
-function lseminish(x::AbstractArray{T,1}, nb::Int; scale::Real = 1) where {T}
+function lseminish(x::AbstractArray{T,1}, nb::Real; scale::Real = 1) where {T}
   return -lsemaxish(-x, nb; scale = scale)
 end
 ##$#############################################################################
@@ -40,9 +41,10 @@ end
 
 function lsemaxish_jacobian(
   x::AbstractArray{T,1},
-  nb::Int;
+  nb::Real;
   scale::Real = 1,
 ) where {T}
+  nb = Int(nb)
   @assert 1 <= nb <= length(x)
   pidx = sortperm(x)
   @views pidx_ = pidx[(end - nb + 1):end]
@@ -60,9 +62,10 @@ end
 
 function lsemaxish_hessian(
   x::AbstractArray{T,1},
-  nb::Int;
+  nb::Real;
   scale::Real = 1,
 ) where {T}
+  nb = Int(nb)
   @assert (1 <= nb <= length(x))
   pidx = sortperm(x)
   @views pidx_ = pidx[(end - nb + 1):end]

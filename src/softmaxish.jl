@@ -30,7 +30,6 @@ function softminish(x::AbstractArray{T,1}; scale::Real = 1) where {T}
 end
 
 function softminish(x::AbstractArray{T,1}, nb::Real; scale::Real = 1) where {T}
-  nb = Int(nb)
   return -softmaxish(-x, nb; scale = scale)
 end
 ##$#############################################################################

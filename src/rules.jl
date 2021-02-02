@@ -1,8 +1,10 @@
 ##^# macro tools ###############################################################
 global ALIAS_IDX = 1
 macro add_rule(fn_, jacobian_fns_)
-  global fn = fn_
-  global jacobian_fns = jacobian_fns_
+  #global fn = fn_
+  #global jacobian_fns = jacobian_fns_
+  fn = fn_
+  jacobian_fns = jacobian_fns_
 
   if fn.args[1].head == :where
     error("Parametric functions not currently supported")
@@ -24,9 +26,8 @@ macro add_rule(fn_, jacobian_fns_)
       insert!(fn_head.args[1].args, 2, Expr(:parameters, :(parameters...)))
     end
     fn_args_is_tensor = map(
-      arg ->
-        isa(arg, Symbol) ? arg == :Tensor :
-        arg.head == :curly && arg.args[1] == :Tensor,
+      arg -> isa(arg, Symbol) ? arg == :Tensor :
+          arg.head == :curly && arg.args[1] == :Tensor,
       fn_args_types,
     )
   end
@@ -41,9 +42,8 @@ macro add_rule(fn_, jacobian_fns_)
     fn_alias,
     :cache,
     map(
-      i ->
-        fn_args_is_tensor[i] ? Expr(:., fn_args_names[i], :(:value)) :
-        fn_args_names[i],
+      i -> fn_args_is_tensor[i] ? Expr(:., fn_args_names[i], :(:value)) :
+          fn_args_names[i],
       1:length(fn_args),
     )...,
   )
@@ -90,7 +90,7 @@ macro add_rule(fn_, jacobian_fns_)
             :(::),
             fn_args_names[i],
             fn_args_is_tensor[i] ? :(Union{<:Real,AbstractArray{<:Real}}) :
-            fn_args_types[i],
+                fn_args_types[i],
           ),
           1:length(fn_args_names),
         )...,
@@ -118,31 +118,8 @@ import Base: length, size
 length(a::Tensor) = length(a.value)
 size(a::Tensor) = size(a.value)
 ##$#############################################################################
-import Base: map, broadcast
-import .Broadcast: broadcasted, materialize
-
-const fn_derv_map = Dict{Function,Function}(sin => cos, cos => x -> -sin(x))
-
-@add_rule function map(cache, f::Function, a)
-  return map(f, a)
-end [
-  (cache, f, a) -> nothing,
-  function (cache, f, a)
-    return haskey(fn_derv_map, f) ? spdiagm(0 => fn_derv_map[f].(a)) : nothing
-  end,
-]
-
-@add_rule function broadcasted(cache, f::Function, a)
-  return f.(a)
-end [
-  (cache, f, a) -> nothing,
-  function (cache, f, a)
-    return haskey(fn_derv_map, f) ? spdiagm(0 => fn_derv_map[f].(a)) : nothing
-  end,
-]
-##$#############################################################################
 ##^# operators definitions #####################################################
-import Base: +, -, *, hcat, vcat
+import Base: +, -, *, /, ^, hcat, vcat, sum
 
 @add_rule function +(cache, a, b)
   return a + b
@@ -219,6 +196,172 @@ end [
     return sparse(I, J, V, length(a) + length(b), length(b))
   end,
 ]
+
+@add_rule function sum(cache, a)
+  return sum(a)
+end Function[(cache, a) -> ones(1, length(a))]
+##$#############################################################################
+##^# reduce operator ###########################################################
+import Base: reduce
+
+function reduce_hcat_jacobian(
+  i::Int,
+  cache,
+  arg_list::Vector{Union{Tensor{T},AbstractArray{T},T,Real}},
+) where {T}
+  csizesum, clengthsum = cache["csizesum"], cache["clengthsum"]
+  idxshift, n = (i > 1 ? clengthsum[i - 1] : 0), length(arg_list[i])
+  I = collect(1:n) .+ idxshift
+  J = collect(1:n)
+  V = ones(T, n)
+  return sparse(I, J, V, clengthsum[end], n)
+end
+
+function reduce_vcat_jacobian(
+  i::Int,
+  cache,
+  arg_list::Vector{Union{Tensor{T},AbstractArray{T},T,Real}},
+) where {T}
+  csizesum, clengthsum = cache["csizesum"], cache["clengthsum"]
+  idxshift, n = (i > 1 ? csizesum[i - 1] : 0), length(arg_list[i])
+  arg = arg_list[i]
+  m, n = size(arg, 1), size(arg, 2)
+  I =
+    reduce(vcat, [(1:m) .+ idxshift .+ (j - 1) * csizesum[1][end] for j = 1:n])
+  J = collect(1:n)
+  V = ones(T, n)
+  return sparse(I, J, V, clengthsum[end], n)
+end
+
+const reduce_df_map = Dict{Function,Function}(
+  vcat => reduce_vcat_jacobian,
+  hcat => reduce_hcat_jacobian,
+)
+
+function reduce(
+  f::Function,
+  arg_list::Vector{Union{Tensor{T},AbstractArray{T},T,Real}},
+) where {T}
+  @assert haskey(reduce_df_map, f)
+  global ALIAS_IDX
+  fn_alias = Symbol(@sprintf("rule_alias_%09d!", ALIAS_IDX))
+  ALIAS_IDX += 1
+
+  cache = Dict{Union{Symbol,String},Union{<:Real,AbstractArray{<:Real}}}()
+  value = reduce(f, [isa(arg, Tensor) ? arg.value : arg for arg in arg_list])
+  cache["csizesum"] = (
+    cumsum(size(arg, 1) for arg in arg_list),
+    cumsum(size(arg, 2) for arg in arg_list),
+  )
+  cache["clengthsum"] = cumsum(length(arg) for arg in arg_list)
+  ret = Tensor{T}(value)
+  ret.cache = cache
+  ret.parents = arg_list
+  ret.parameters = nothing
+  ret.requires_grad =
+    any(isa(arg, Tensor) && arg.requires_grad for arg in arg_list)
+  ret.jacobian_fns = reduce_df_map[f]
+
+  return ret
+end
+##$#############################################################################
+##^# getindex operator #########################################################
+import Base: getindex
+
+@add_rule function getindex(cache, a, idxs::Union{Int,AbstractArray{Int,1}}) 
+  return a[idxs]
+end [
+  function (cache, a, idxs)
+    J = collect(1:length(idxs))
+    I = collect(size(idxs) == () ? [idxs] : idxs)
+    V = ones(T, length(idxs))
+    return sparse(I, J, V, length(a), length(idxs))
+  end,
+  (cache, a, idxs) -> nothing,
+]
+##$#############################################################################
+##^# elementwise operators #####################################################
+import Base: map, broadcast
+import .Broadcast: broadcasted, materialize
+
+const unitary_df_map = Dict{Function,Function}(sin => cos, cos => x -> -sin(x))
+const binary_df_map = Dict{Function,Tuple{Function,Function}}(
+  Base.:- => ((x, y) -> 1.0, (x, y) -> -1.0),
+  Base.:^ => ((x, y) -> y * x^(y - 1.0), (x, y) -> (x^y) * log(x)),
+  Base.:/ => ((x, y) -> 1 / y, (x, y) -> -x / y^2),
+)
+
+@add_rule function map(cache, f::Function, a)
+  return map(f, a)
+end [
+  (cache, f, a) -> nothing,
+  function (cache, f, a)
+    if haskey(unitary_df_map, f)
+      val = unitary_df_map[f].(a)
+      val = size(val) == () ? [val] : reshape(val, :)
+      return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+]
+
+@add_rule function broadcasted(cache, f::Function, a)
+  return f.(a)
+end [
+  (cache, f, a) -> nothing,
+  function (cache, f, a)
+    if haskey(unitary_df_map, f)
+      val = unitary_df_map[f].(a)
+      val = size(val) == () ? [val] : reshape(val, :)
+      return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+]
+
+@add_rule function broadcasted(cache, f::Function, a, b)
+  return f.(a, b)
+end [
+  (cache, f, a, b) -> nothing,
+  function (cache, f, a, b)
+    if haskey(binary_df_map, f)
+      val = binary_df_map[f][1].(a, b)
+      val = size(val) == () ? [val] : reshape(val, :)
+      return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+  function (cache, f, a, b)
+    if haskey(binary_df_map, f)
+      val = binary_df_map[f][2].(a, b)
+      val = size(val) == () ? [val] : reshape(val, :)
+      return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+]
+function broadcasted(f::Function, a::Tensor{T}, b::Real) where {T}
+  return broadcasted(f, a, Tensor{T}(b))
+end
+function broadcasted(f::Function, a::Real, b::Tensor{T}) where {T}
+  return broadcasted(f, Tensor{T}(a), b)
+end
+# this is to capture the literal exponentiation (like squaring)
+# this trick might break something else, but YOLO
+function broadcasted(
+  literal_pow::Function,
+  f::Function,
+  a::Tensor{T},
+  b::Base.Val{V},
+) where {T,V}
+  @assert literal_pow == Base.literal_pow
+  return broadcasted(f, a, T(V))
+end
+
 ##$#############################################################################
 ##^# maxish rules ##############################################################
 @add_rule function softmaxish(cache, x; scale = 1)

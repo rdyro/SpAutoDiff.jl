@@ -83,23 +83,15 @@ function compute_jacobian(
     if length(mask) > 0 && any(mask)
       for (i, val) in enumerate(mask)
         (!val) && (continue)
-        if node.parameters != nothing
-          Dg = node.jacobian_fns[i](
-            node.cache,
-            map(
-              parent -> isa(parent, Tensor) ? parent.value : parent,
-              node.parents,
-            )...;
-            node.parameters...
-          )
+        parameters = node.parameters != nothing ? node.parameters : ()
+        args = map(
+          parent -> isa(parent, Tensor) ? parent.value : parent,
+          node.parents,
+        )
+        if isa(node.jacobian_fns, AbstractArray)
+          Dg = node.jacobian_fns[i](node.cache, args...; parameters...)
         else
-          Dg = node.jacobian_fns[i](
-            node.cache,
-            map(
-              parent -> isa(parent, Tensor) ? parent.value : parent,
-              node.parents,
-            )...,
-          )
+          Dg = node.jacobian_fns(i, node.cache, args...; parameters...)
         end
         Df = jacobians[node.parents[i]]
         J_ = jacobian_chain_rule(Dg, Df)

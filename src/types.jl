@@ -1,6 +1,3 @@
-##^# types definitions #########################################################
-CacheKey = Union{Symbol,String}
-
 mutable struct Tensor{T}
   value::Union{T, AbstractArray{T}}
   requires_grad::Bool
@@ -8,7 +5,7 @@ mutable struct Tensor{T}
   parents::Vector{Union{Tensor{T}, Any}}
   parameters::Union{Dict{Symbol, Any}, Nothing}
   cache::Dict{Union{Symbol, String}, Union{<: Real, AbstractArray{<: Real}}}
-  jacobian_fns::Vector{Function}
+  jacobian_fns::Union{Vector{Function}, Function}
   hessian_fns::Vector{Function}
 end
 
@@ -32,4 +29,3 @@ function display(t::Tensor)
   display(t.value)
   return
 end
-##$#############################################################################
