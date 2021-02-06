@@ -6,6 +6,10 @@
 #  Pkg.develop(path=joinpath(@__DIR__, ".."))
 #  using SpAutoDiff
 #end
-include(joinpath(@__DIR__, "../src/SpAutoDiff.jl"))
+
+if !isdefined(Main, :SpAutoDiff)
+  include(joinpath(@__DIR__, "../src/SpAutoDiff.jl"))
+end
 using LinearAlgebra, SparseArrays, Printf, Statistics
 using BenchmarkTools#, Debugger, ReverseDiff
+SAD = SpAutoDiff

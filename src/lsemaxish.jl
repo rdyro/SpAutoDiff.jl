@@ -5,6 +5,10 @@ function lse(x::AbstractArray{T,1}; scale::Real = 1) where {T}
   return log(sum(exp.(scale * (x .- xmax)))) / scale + xmax
 end
 
+function lsemaxish(x::AbstractArray{T,1}; scale::Real = 1) where {T}
+  return lse(x; scale = scale)
+end
+
 function lsemaxish(x::AbstractArray{T,1}, nb::Real; scale::Real = 1) where {T}
   nb = Int(nb)
   @assert 1 <= nb <= length(x)
@@ -24,7 +28,7 @@ end
 ##$#############################################################################
 ##^# gradients definitions #####################################################
 function lsemaxish_jacobian(x::AbstractArray{T,1}; scale::Real = 1) where {T}
-  return softmax(x; scale=scale)
+  return softmax(x; scale = scale)'
   #s = softmax(x; scale = scale)
   #return reshape(s + scale * ((x .* s) - dot(x, s) * s), 1, :)
 end

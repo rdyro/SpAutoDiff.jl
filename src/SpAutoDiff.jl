@@ -1,7 +1,7 @@
 module SpAutoDiff
 
 using LinearAlgebra, SparseArrays, Printf, Statistics
-using BenchmarkTools
+using BenchmarkTools, Debugger
 
 include("types.jl")
 
@@ -11,6 +11,8 @@ include("lsemaxish.jl")
 
 include("rules.jl")
 include("graph.jl")
+
+include("stl.jl")
 
 export Tensor
 

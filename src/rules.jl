@@ -1,10 +1,7 @@
 ##^# macro tools ###############################################################
 global ALIAS_IDX = 1
-macro add_rule(fn_, jacobian_fns_)
-  #global fn = fn_
-  #global jacobian_fns = jacobian_fns_
-  fn = fn_
-  jacobian_fns = jacobian_fns_
+macro add_rule(fn_, jacobian_fns_, hessian_fns_ = nothing)
+  fn, jacobian_fns, hessian_fns = fn_, jacobian_fns_, hessian_fns_
 
   if fn.args[1].head == :where
     error("Parametric functions not currently supported")
@@ -66,6 +63,7 @@ macro add_rule(fn_, jacobian_fns_)
       )),
     )
     ret.jacobian_fns = $jacobian_fns
+    ret.hessian_fns = $hessian_fns
     return ret
   end
   fn_def = Expr(:function, fn_head, fn_body)
@@ -118,7 +116,7 @@ import Base: length, size
 length(a::Tensor) = length(a.value)
 size(a::Tensor) = size(a.value)
 ##$#############################################################################
-##^# operators definitions #####################################################
+##^# linalg operators ##########################################################
 import Base: +, -, *, /, ^, hcat, vcat, sum
 
 @add_rule function +(cache, a, b)
@@ -127,11 +125,18 @@ end [
   (cache, a, b) -> sparse(T(1) * I, length(a), length(a)),
   (cache, a, b) -> sparse(T(1) * I, length(b), length(b)),
 ]
+
 @add_rule function -(cache, a, b)
   return a - b
 end [
   (cache, a, b) -> sparse(T(1) * I, length(a), length(a)),
   (cache, a, b) -> sparse(T(-1) * I, length(b), length(b)),
+]
+
+@add_rule function -(cache, a)
+  return -a
+end Function[
+  (cache, a) -> sparse(T(1) * I, length(a), length(a)),
 ]
 
 @add_rule function *(cache, a, b)
@@ -156,6 +161,7 @@ end [
     end
   end,
 ]
+
 *(a::Real, b::Tensor{T}) where {T} = Tensor{T}(a) * b
 *(a::Tensor{T}, b::Real) where {T} = a * Tensor{T}(b)
 
@@ -211,7 +217,7 @@ function reduce_hcat_jacobian(
 ) where {T}
   csizesum, clengthsum = cache["csizesum"], cache["clengthsum"]
   idxshift, n = (i > 1 ? clengthsum[i - 1] : 0), length(arg_list[i])
-  I = collect(1:n) .+ idxshift
+  J = collect(1:n) .+ idxshift
   J = collect(1:n)
   V = ones(T, n)
   return sparse(I, J, V, clengthsum[end], n)
@@ -268,38 +274,110 @@ end
 ##^# getindex operator #########################################################
 import Base: getindex
 
-@add_rule function getindex(cache, a, idxs::Union{Int,AbstractArray{Int,1}}) 
+@add_rule function getindex(cache, a, idxs::Union{Int,AbstractArray{Int,1}})
   return a[idxs]
 end [
   function (cache, a, idxs)
-    J = collect(1:length(idxs))
-    I = collect(size(idxs) == () ? [idxs] : idxs)
+    J = collect(size(idxs) == () ? [idxs] : idxs)
+    I = collect(1:length(idxs))
     V = ones(T, length(idxs))
-    return sparse(I, J, V, length(a), length(idxs))
+    return sparse(I, J, V, length(idxs), length(a))
   end,
   (cache, a, idxs) -> nothing,
+]
+
+@add_rule function getindex(
+  cache,
+  a,
+  idxs1::Union{Int,AbstractArray{Int,1}},
+  idxs2::Union{Int,AbstractArray{Int,1}},
+)
+  return a[idxs1, idxs2]
+end [
+  function (cache, a, idxs1, idxs2)
+    idxs1 = size(idxs1) == () ? [idxs1] : collect(idxs1)
+    idxs2 = size(idxs2) == () ? [idxs2] : collect(idxs2)
+    J = repeat(idxs1; outer = length(idxs2))
+    m, l = size(a, 1), length(idxs1)
+    for i = 1:length(idxs2)
+      J[((i - 1) * l + 1):(i * l)] .+= m * (idxs2[i] - 1)
+    end
+    I = collect(1:length(J))
+    V = ones(T, length(I))
+    return sparse(I, J, V, length(I), length(a))
+  end,
+  (cache, a, idxs1, idxs2) -> nothing,
+  (cache, a, idxs1, idxs2) -> nothing,
 ]
 ##$#############################################################################
 ##^# elementwise operators #####################################################
 import Base: map, broadcast
 import .Broadcast: broadcasted, materialize
 
-const unitary_df_map = Dict{Function,Function}(sin => cos, cos => x -> -sin(x))
-const binary_df_map = Dict{Function,Tuple{Function,Function}}(
-  Base.:- => ((x, y) -> 1.0, (x, y) -> -1.0),
-  Base.:^ => ((x, y) -> y * x^(y - 1.0), (x, y) -> (x^y) * log(x)),
-  Base.:/ => ((x, y) -> 1 / y, (x, y) -> -x / y^2),
+const unitary_df_map = Dict{Function,Union{Function,Nothing}}(
+  abs => sign,
+  sin => cos,
+  cos => x -> -sin(x),
+  tan => x -> sec(x)^2,
+  sign => x -> one(x),
 )
+const unitary_d2f_map = Dict{Function,Union{Function,Nothing}}(
+  abs => nothing,
+  sin => x -> -sin(x),
+  cos => x -> -cos(x),
+  tan => x -> 2 * sec(x)^2 * tan(x),
+  sign => nothing,
+)
+
+const binary_df_map =
+  Dict{Function,Tuple{Union{Function,Nothing},Union{Function,Nothing}}}(
+    Base.:+ => ((x, y) -> 1.0, (x, y) -> 1.0),
+    Base.:- => ((x, y) -> 1.0, (x, y) -> -1.0),
+    Base.:^ => ((x, y) -> y * x^(y - 1.0), (x, y) -> (x^y) * log(x)),
+    Base.:/ => ((x, y) -> 1 / y, (x, y) -> -x / y^2),
+    max => ((x, y) -> one(x) * (x >= y), (x, y) -> one(y) * (y >= x)),
+    min => ((x, y) -> one(x) * (x <= y), (x, y) -> one(y) * (y <= x)),
+  )
+const binary_d2f_map =
+  Dict{Function,Tuple{Union{Function,Nothing},Union{Function,Nothing}}}(
+    Base.:+ => (nothing, nothing),
+    Base.:- => (nothing, nothing),
+    Base.:^ =>
+      ((x, y) -> y * (y - 1) * x^(y - 2.0), (x, y) -> (x^y) * log(x)^2),
+    Base.:/ => (nothing, (x, y) -> 2 * x / y^3),
+    max => (nothing, nothing),
+    min => (nothing, nothing),
+  )
 
 @add_rule function map(cache, f::Function, a)
   return map(f, a)
 end [
   (cache, f, a) -> nothing,
   function (cache, f, a)
-    if haskey(unitary_df_map, f)
+    if haskey(unitary_df_map, f) && unitary_df_map[f] != nothing
+      (unitary_df_map[f] == nothing) && (return nothing)
       val = unitary_df_map[f].(a)
       val = size(val) == () ? [val] : reshape(val, :)
       return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+] [
+  (cache, f, a) -> nothing,
+  function (cache, f, a)
+    if haskey(unitary_d2f_map, f) && unitary_d2f_map[f] != nothing
+      (unitary_d2f_map[f] == nothing) && (return nothing)
+      val = unitary_d2f_map[f].(a)
+      val = size(val) == () ? [val] : reshape(val, :)
+      #return spdiagm(0 => val)
+      return sparse(
+        map(i -> (i - 1) * length(a) + i, 1:length(a)),
+        1:length(a),
+        val,
+        length(a)^2,
+        length(a),
+      )
     else
       return nothing
     end
@@ -311,10 +389,29 @@ end [
 end [
   (cache, f, a) -> nothing,
   function (cache, f, a)
-    if haskey(unitary_df_map, f)
+    if haskey(unitary_df_map, f) && unitary_df_map[f] != nothing
+      (unitary_df_map[f] == nothing) && (return nothing)
       val = unitary_df_map[f].(a)
       val = size(val) == () ? [val] : reshape(val, :)
       return spdiagm(0 => val)
+    else
+      return nothing
+    end
+  end,
+] [
+  (cache, f, a) -> nothing,
+  function (cache, f, a)
+    if haskey(unitary_d2f_map, f) && unitary_d2f_map[f] != nothing
+      val = unitary_d2f_map[f].(a)
+      val = size(val) == () ? [val] : reshape(val, :)
+      #return spdiagm(0 => val)
+      return sparse(
+        map(i -> (i - 1) * length(a) + i, 1:length(a)),
+        1:length(a),
+        val,
+        length(a)^2,
+        length(a),
+      )
     else
       return nothing
     end
@@ -326,7 +423,7 @@ end [
 end [
   (cache, f, a, b) -> nothing,
   function (cache, f, a, b)
-    if haskey(binary_df_map, f)
+    if haskey(binary_df_map, f) && binary_df_map[f][1] != nothing
       val = binary_df_map[f][1].(a, b)
       val = size(val) == () ? [val] : reshape(val, :)
       return spdiagm(0 => val)
@@ -335,7 +432,7 @@ end [
     end
   end,
   function (cache, f, a, b)
-    if haskey(binary_df_map, f)
+    if haskey(binary_df_map, f) && binary_df_map[f][2] != nothing
       val = binary_df_map[f][2].(a, b)
       val = size(val) == () ? [val] : reshape(val, :)
       return spdiagm(0 => val)
@@ -343,7 +440,42 @@ end [
       return nothing
     end
   end,
+] [
+  (cache, f, a, b) -> nothing,
+  function (cache, f, a, b)
+    if haskey(binary_d2f_map, f) && binary_d2f_map[f][1] != nothing
+      val = binary_d2f_map[f][1].(a, b)
+      val = size(val) == () ? [val] : reshape(val, :)
+      #return spdiagm(0 => val)
+      return sparse(
+        map(i -> (i - 1) * length(a) + i, 1:length(a)),
+        1:length(val),
+        val,
+        length(val)^2,
+        length(val),
+      )
+    else
+      return nothing
+    end
+  end,
+  function (cache, f, a, b)
+    if haskey(binary_d2f_map, f) && binary_d2f_map[f][2] != nothing
+      val = binary_d2f_map[f][2].(a, b)
+      val = size(val) == () ? [val] : reshape(val, :)
+      #return spdiagm(0 => val)
+      return sparse(
+        map(i -> (i - 1) * length(a) + i, 1:length(a)),
+        1:length(val),
+        val,
+        length(val)^2,
+        length(val),
+      )
+    else
+      return nothing
+    end
+  end,
 ]
+
 function broadcasted(f::Function, a::Tensor{T}, b::Real) where {T}
   return broadcasted(f, a, Tensor{T}(b))
 end
@@ -366,11 +498,11 @@ end
 ##^# maxish rules ##############################################################
 @add_rule function softmaxish(cache, x; scale = 1)
   return softmaxish(x; scale = scale)
-end [(cache, x; scale = 1) -> softmaxish_jacobian(x; scale = scale)]
+end Function[(cache, x; scale = 1) -> softmaxish_jacobian(x; scale = scale)]
 
 @add_rule function softminish(cache, x; scale = 1)
   return softminish(x; scale = scale)
-end [(cache, x; scale = 1) -> softmaxish_jacobian(-x; scale = scale)]
+end Function[(cache, x; scale = 1) -> softmaxish_jacobian(-x; scale = scale)]
 
 @add_rule function softmaxish(cache, x, n; scale = 1)
   return softmaxish(x, n; scale = scale)
@@ -393,13 +525,11 @@ function softminish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
   return softminish(x, Tensor{T}(n); scale = scale)
 end
 
-
-
 @add_rule function lsemaxish(cache, x; scale = 1)
   return lsemaxish(x; scale = scale)
-end [(cache, x; scale = 1) -> lsemaxish_jacobian(x; scale = scale)]
+end Function[(cache, x; scale = 1) -> lsemaxish_jacobian(x; scale = scale)]
 
 @add_rule function lseminish(cache, x; scale = 1)
   return lseminish(x; scale = scale)
-end [(cache, x; scale = 1) -> lsemaxish_jacobian(-x; scale = scale)]
+end Function[(cache, x; scale = 1) -> lsemaxish_jacobian(-x; scale = scale)]
 ##$#############################################################################

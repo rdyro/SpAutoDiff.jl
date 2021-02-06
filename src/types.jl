@@ -6,7 +6,7 @@ mutable struct Tensor{T}
   parameters::Union{Dict{Symbol, Any}, Nothing}
   cache::Dict{Union{Symbol, String}, Union{<: Real, AbstractArray{<: Real}}}
   jacobian_fns::Union{Vector{Function}, Function}
-  hessian_fns::Vector{Function}
+  hessian_fns::Union{Vector{Function}, Function, Nothing}
 end
 
 Tensor{T}(value::Union{<: Real,AbstractArray{<: Real}}, requires_grad = true) where {T} =
