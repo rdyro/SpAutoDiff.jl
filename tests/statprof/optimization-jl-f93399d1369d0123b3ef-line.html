@@ -1,0 +1,1227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="statprofiler.css">
+
+    <title>StatProfilerHTML.jl: /home/rdyro/Dropbox/stanford/allstate/AutonomousRiskFramework/SpAutoDiff.jl/tests/optimization.jl</title>
+  </head>
+  <body>
+<div class="report-header">
+  <div class="backlink"><a href="index.html">Report index</a></div>
+  <div class="report-title">StatProfilerHTML.jl report</div>
+  <div class="generated-on">Generated on Mon 22 Feb 2021 04:02:21 PM PST</div>
+</div>
+
+    <div id="body-content">
+      <table>
+        <caption>File source code</caption>
+        <tr>
+          <th>Line</td>
+          <th>Exclusive</th>
+          <th>Inclusive</th>
+          <th>Code</th>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-1"></a>1</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">using Profile
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-2"></a>2</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">using BenchmarkTools, ProfileView, StatProfilerHTML
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-3"></a>3</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-4"></a>4</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">include(joinpath(@__DIR__, &quot;../src/naked_SpAutoDiff.jl&quot;))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-5"></a>5</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">if !@isdefined ID
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-6"></a>6</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  using IntelligentDriving
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-7"></a>7</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  ID = IntelligentDriving
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-8"></a>8</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-9"></a>9</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-10"></a>10</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function scp_sad_fns_gen(obj_fn::Function)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-11"></a>11</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  args_ref = Ref{Tuple}()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-12"></a>12</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-13"></a>13</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  function f_fn(U, X_prev, U_prev, reg, Ft, ft, params...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-14"></a>14</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    udim, N = size(U_prev)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-15"></a>15</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    xdim = size(X_prev, 1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-16"></a>16</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-17"></a>17</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    U = reshape(U, udim, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-18"></a>18</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    X = reshape(Ft * reshape(U, :) + ft, xdim, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-19"></a>19</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J = obj_fn(X, U, params...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-20"></a>20</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    reg_x, reg_u = reg
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-21"></a>21</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    dX, dU = X[:, 1:(end - 1)] - X_prev[:, 2:end], U - U_prev
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-22"></a>22</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J_reg_x = 0.5 * reg_x * dot(reshape(dX, :), reshape(dX, :))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-23"></a>23</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J_reg_u = 0.5 * reg_u * dot(reshape(dU, :), reshape(dU, :))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-24"></a>24</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-25"></a>25</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return J + J_reg_x + J_reg_u
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-26"></a>26</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-27"></a>27</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-28"></a>28</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  function f_fn_(arg1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-29"></a>29</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-tests-optimization-jl-g_fn-29"></a>
+              9 (23.68%) samples spent in g_fn!<br />
+              0 (ex.),
+              9 (100.00%) (incl.)
+              when called from
+              macro expansion
+              <a href="Profile-jl-5dfd8c72f8949ca42e91-line.html#LProfile-jl-5dfd8c72f8949ca42e91-line.html-28">line 28</a><br />
+            </div>
+            <span class="code">    return f_fn(arg1, args_ref[]...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-30"></a>30</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-31"></a>31</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-32"></a>32</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  function g_fn!(ret, arg1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-33"></a>33</td>
+          <td></td>
+          <td>9 (23.68%)</td>
+          <td>
+            <div class="callees">
+              9 (100.00%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-compute_jacobian-67">compute_jacobian</a><br />
+            </div>
+            <span class="code">    arg1_ = Tensor(arg1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-34"></a>34</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ret_ = f_fn(arg1_, args_ref[]...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-35"></a>35</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J = compute_jacobian(ret_, arg1_)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-36"></a>36</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ret[:] = J[:]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-37"></a>37</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-38"></a>38</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-39"></a>39</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-40"></a>40</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  function h_fn!(ret, arg1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-41"></a>41</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    arg1_ = Tensor(arg1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-42"></a>42</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ret_ = f_fn(arg1_, args_ref[]...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-43"></a>43</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J, H = compute_hessian(ret_, arg1_)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-44"></a>44</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ret[:, :] = H
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-45"></a>45</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-46"></a>46</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-47"></a>47</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return f_fn_, g_fn!, h_fn!, args_ref
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-48"></a>48</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-49"></a>49</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-50"></a>50</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function quad_prod(x, Q_diag)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-51"></a>51</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return dot(reshape(Q_diag, :), reshape(x, :) .^ 2)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-52"></a>52</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-53"></a>53</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-54"></a>54</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function obj_fn(X, U, params...)                                                 
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-55"></a>55</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Q_diag, R_diag, X_ref, U_ref = params                                          
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-56"></a>56</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  xdim, N = size(X_ref)                                                          
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-57"></a>57</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  X = X[:, (end - N + 1):end]                                                    
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-58"></a>58</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #Jx = sum(quad_prod(X - X_ref, Q_diag))                                        
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-59"></a>59</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #Ju = sum(quad_prod(U - U_ref, R_diag))                                        
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-60"></a>60</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Jx = quad_prod(X - X_ref, Q_diag)                                              
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-61"></a>61</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Ju = quad_prod(U - U_ref, R_diag)                                              
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-62"></a>62</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  J = Jx + Ju                                                                    
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-63"></a>63</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return J                                                                       
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-64"></a>64</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-65"></a>65</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-66"></a>66</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">xdim, udim, N = 4, 2, 20
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-67"></a>67</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">x0 = 0.0 * ones(4)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-68"></a>68</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">X_prev, U_prev = repeat(x0, 1, N), zeros(udim, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-69"></a>69</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">U = 1e-3 * randn(udim, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-70"></a>70</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">P = repeat(reshape([0.1, 1.0, 1.0], :, 1), 1, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-71"></a>71</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-72"></a>72</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">Q_diag = repeat([1e0, 1e0, 1e-3, 1e-3], 1, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-73"></a>73</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">R_diag = repeat(1e-2 * ones(udim), 1, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-74"></a>74</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">X_ref, U_ref = 2 * ones(xdim, N), zeros(udim, N)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-75"></a>75</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">params = Q_diag, R_diag, X_ref, U_ref
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-76"></a>76</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-77"></a>77</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">f = stack(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-78"></a>78</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  map(i -&gt; ID.unicycle_f(X_prev[:, i], U_prev[:, i], P[:, i]), 1:N);
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-79"></a>79</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  dims = 2,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-80"></a>80</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-81"></a>81</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">fx = stack(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-82"></a>82</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  map(i -&gt; ID.unicycle_fx(X_prev[:, i], U_prev[:, i], P[:, i]), 1:N);
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-83"></a>83</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  dims = 3,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-84"></a>84</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-85"></a>85</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">fu = stack(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-86"></a>86</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  map(i -&gt; ID.unicycle_fu(X_prev[:, i], U_prev[:, i], P[:, i]), 1:N);
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-87"></a>87</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  dims = 3,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-88"></a>88</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-89"></a>89</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-90"></a>90</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">if !@isdefined f_fn
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-91"></a>91</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  f_fn, g_fn!, h_fn!, args_ref = scp_sad_fns_gen(obj_fn)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-92"></a>92</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-93"></a>93</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-tests-optimization-jl-test-93"></a>
+              9 (23.68%) samples spent in test<br />
+              0 (ex.),
+              9 (100.00%) (incl.)
+              when called from
+              include
+              <a href="client-jl-aa88b378118f538ed09f-line.html#Lclient-jl-aa88b378118f538ed09f-line.html-457">line 457</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-94"></a>94</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function test()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-95"></a>95</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  reg = (1e-1, 1e-1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-96"></a>96</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Ft, ft = ID.linearized_dynamics(x0, f, fx, fu, X_prev, U_prev)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-97"></a>97</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  args_ref[] = (X_prev, U_prev, reg, Ft, ft, Q_diag, R_diag, X_ref, U_ref)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-98"></a>98</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  global obj = f_fn(Tensor(U))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-99"></a>99</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  global J, H = zeros(length(U)), zeros(length(U), length(U))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-100"></a>100</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  g_fn!(J, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-101"></a>101</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #h_fn!(H, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-102"></a>102</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-103"></a>103</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time f_fn(Tensor(U))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-104"></a>104</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time f_fn(Tensor(U))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-105"></a>105</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time f_fn(U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-106"></a>106</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time f_fn(U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-107"></a>107</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time g_fn!(J, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-108"></a>108</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  @time g_fn!(J, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-109"></a>109</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #@profview g_fn!(J, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-110"></a>110</td>
+          <td></td>
+          <td>9 (23.68%)</td>
+          <td>
+            <div class="callees">
+              9 (100.00%)
+              samples spent calling
+              <a href="StatProfilerHTML-jl-450b38b92f54c436ebe2-line.html#S-home-rdyro-julia-packages-StatProfilerHTML-OFVct-src-StatProfilerHTML-jl-macro-expansion-56">macro expansion</a><br />
+            </div>
+            <span class="code">  @profilehtml g_fn!(J, U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-111"></a>111</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #@btime $g_fn!($J, $U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-112"></a>112</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-113"></a>113</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  #global J2 = jacobian_gen(f_fn)(U)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-114"></a>114</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-115"></a>115</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-116"></a>116</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Loptimization-jl-f93399d1369d0123b3ef-line.html-117"></a>117</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">test()
+</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

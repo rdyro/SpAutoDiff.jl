@@ -10,8 +10,8 @@ function find_used_nodes!(
   end
 
   tensor_parents = filter(node_ -> isa(node_, Tensor), node.parents)
-  tensor_parents_orgs = deepcopy(tensor_parents)
-  node_org = deepcopy(node)
+  #tensor_parents_orgs = deepcopy(tensor_parents)
+  #node_org = deepcopy(node)
 
   if length(tensor_parents) == 0
     colormap[node] = false
@@ -62,23 +62,28 @@ end
 function compute_jacobian(
   output::Tensor{T},
   input::Tensor{T};
-  jacobian::Union{AbstractArray{T},T,Nothing} = T(1),
+  jacobian::Union{AbstractArray{T},T,UniformScaling{T},Nothing} = nothing,
 ) where {T}
   jacobian = jacobian != nothing ? jacobian : T(1)
   colormap = find_used_nodes(output, input)
-  jacobians =
-    Dict{Tensor{T},Union{T,AbstractArray{T},Nothing}}(input => jacobian)
+  jacobians = Dict{
+    Tensor{T},
+    Union{Tensor{T},T,AbstractArray{T},UniformScaling{T},Nothing},
+  }(
+    input => jacobian,
+  )
   nodes = collect(keys(colormap))
   to_consider = Set(keys(colormap))
   nodes = toposort(nodes, to_consider)
   for node in nodes
     (node == input) && (continue)
     J = nothing
-    mask = length(node.parents) > 0 ?
+    mask =
+      length(node.parents) > 0 ?
       map(
-      parent -> isa(parent, Tensor) && get(colormap, parent, false),
-      node.parents,
-    ) :
+        parent -> isa(parent, Tensor) && get(colormap, parent, false),
+        node.parents,
+      ) :
       Bool[]
     if length(mask) > 0 && any(mask)
       for (i, val) in enumerate(mask)
@@ -87,7 +92,8 @@ function compute_jacobian(
         # determine jacobian arguments
         parameters = node.parameters != nothing ? node.parameters : ()
         args = map(
-          parent -> isa(parent, Tensor) ? parent.value : parent,
+          #parent -> isa(parent, Tensor) ? parent.value : parent,
+          parent -> isa(parent, Tensor) ? parent : parent,
           node.parents,
         )
 
@@ -118,10 +124,11 @@ end
 function compute_hessian(
   output::Tensor{T},
   input::Tensor{T};
-  jacobian::Union{AbstractArray{T},T,Nothing} = T(1),
+  jacobian::Union{AbstractArray{T},T,Nothing} = nothing,
   hessian::Union{AbstractArray{T},T,Nothing} = nothing,
 ) where {T}
-  jacobian = jacobian != nothing ? jacobian :
+  jacobian =
+    jacobian != nothing ? jacobian :
     sparse(T(1) * I, length(input), length(input))
   hessian = hessian != nothing ? hessian : nothing
   colormap = find_used_nodes(output, input)
@@ -136,11 +143,12 @@ function compute_hessian(
   for node in nodes
     (node == input) && (continue)
     J, H = nothing, nothing
-    mask = length(node.parents) > 0 ?
+    mask =
+      length(node.parents) > 0 ?
       map(
-      parent -> isa(parent, Tensor) && get(colormap, parent, false),
-      node.parents,
-    ) :
+        parent -> isa(parent, Tensor) && get(colormap, parent, false),
+        node.parents,
+      ) :
       Bool[]
     if length(mask) > 0 && any(mask)
       for (i, val) in enumerate(mask)
@@ -148,10 +156,12 @@ function compute_hessian(
 
         # determine jacobian arguments
         parameters = node.parameters != nothing ? node.parameters : ()
-        args = map(
-          parent -> isa(parent, Tensor) ? parent.value : parent,
-          node.parents,
-        )
+        #args = map(
+        #  parent -> isa(parent, Tensor) ? parent.value : parent,
+        #  node.parents,
+        #)
+        args =
+          map(parent -> isa(parent, Tensor) ? parent : parent, node.parents)
 
         # compute the specific Dg and Hf of a particular parent
         if isa(node.jacobian_fns, AbstractArray)
@@ -169,7 +179,11 @@ function compute_hessian(
 
         # obtain the cached Df and Hf & apply chain rule
         Df, Hf = jacobians[node.parents[i]], hessians[node.parents[i]]
-        J_, H_ = jacobian_chain_rule(Dg, Df), hessian_chain_rule(Dg, Hg, Df, Hf)
+        J_ = jacobian_chain_rule(Dg, Df)
+        m, p = length(args[i]), length(node.value)
+        @bp
+        H_ = hessian_chain_rule(m, p, Dg, Hg, Df, Hf)
+        #(H_ != nothing) && (display(collect(H_)))
 
         # sum jacobians
         (J_ != nothing) && (J = J != nothing ? J + J_ : J_)
@@ -185,37 +199,55 @@ end
 ##$#############################################################################
 ##^# utility functions #########################################################
 function jacobian_chain_rule(
-  Dg::Union{<:Real,AbstractArray{<:Real},Nothing},
-  Df::Union{<:Real,AbstractArray{<:Real},Nothing},
+  Dg::Union{Tensor,<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
+  Df::Union{Tensor,<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
 )
   (Dg == nothing || Df == nothing) && (return nothing)
   return Dg * Df
 end
 
 function hessian_chain_rule(
-  Dg::Union{<:Real,AbstractArray{<:Real},Nothing},
-  Hg::Union{<:Real,AbstractArray{<:Real},Nothing},
-  Df::Union{<:Real,AbstractArray{<:Real},Nothing},
-  Hf::Union{<:Real,AbstractArray{<:Real},Nothing},
+  m::Int,
+  p::Int,
+  Dg::Union{<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
+  Hg::Union{<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
+  Df::Union{<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
+  Hf::Union{<:Real,AbstractArray{<:Real},UniformScaling,Nothing},
 ) where {T}
   cond1 = !(Df == nothing || Hg == nothing)
   cond2 = !(Dg == nothing || Hf == nothing)
   (!cond1 && !cond2) && (return nothing)
+  #println(repeat("+", 80))
+  #display(typeof(Dg) <: AbstractArray ? collect(Dg) : Dg)
+  #display(typeof(Hg) <: AbstractArray ? collect(Hg) : Hg)
+  #display(typeof(Df) <: AbstractArray ? collect(Df) : Df)
+  #display(typeof(Hf) <: AbstractArray ? collect(Hf) : Hf)
 
-  p = size(Df) == () ? size(Hg, 1) : size(Dg, 1)
+  #p = size(Df) == () ? size(Hg, 1) : size(Dg, 1)
   if cond1
+    #Hh1 = isa(Df, UniformScaling) ? Df.λ ^ 2 * Hg :
     Hh1 =
-      kron(size(Df) == () ? Df : sparse(Df'), sparse(1.0 * I, p, p)) * Hg * Df
+      isa(Df, UniformScaling) ? Hg :
+      kron(sparse(1.0 * I, p, p), size(Df) == () ? Df : sparse(Df))' * Hg * Df
   else
     Hh1 = nothing
   end
 
-  (!cond2) && (return Hh1)
+  #println()
+  #display(typeof(Hh1) <: AbstractArray ? collect(Hh1) : Hh1)
+  if !cond2
+    #println(repeat("-", 80))
+    return Hh1
+  end
 
   n = size(Df) == () ? div(size(Hf, 1), size(Dg, 2)) : size(Df, 2)
-  Hh2 = kron(Dg, sparse(1.0 * I, n, n)) * Hf
+  Hh2 =
+    isa(Dg, UniformScaling) ? Dg.λ * Hf : kron(Dg, sparse(1.0 * I, n, n)) * Hf
 
   Hh = Hh1 == nothing ? Hh2 : Hh1 + Hh2
+
+  #display(typeof(Hh2) <: AbstractArray ? collect(Hh2) : Hh2)
+  #println(repeat("-", 80))
   return Hh
 end
 ##$#############################################################################

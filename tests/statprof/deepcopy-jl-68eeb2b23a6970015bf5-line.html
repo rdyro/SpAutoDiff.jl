@@ -1,0 +1,1412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="statprofiler.css">
+
+    <title>StatProfilerHTML.jl: /usr/local/julia-1.5.1/bin/../share/julia/base/./deepcopy.jl</title>
+  </head>
+  <body>
+<div class="report-header">
+  <div class="backlink"><a href="index.html">Report index</a></div>
+  <div class="report-title">StatProfilerHTML.jl report</div>
+  <div class="generated-on">Generated on Mon 22 Feb 2021 04:02:21 PM PST</div>
+</div>
+
+    <div id="body-content">
+      <table>
+        <caption>File source code</caption>
+        <tr>
+          <th>Line</td>
+          <th>Exclusive</th>
+          <th>Inclusive</th>
+          <th>Code</th>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-1"></a>1</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code"># This file is a part of Julia. License is MIT: https://julialang.org/license
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-2"></a>2</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-3"></a>3</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code"># deep copying
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-4"></a>4</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-5"></a>5</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code"># Note: deepcopy_internal(::Any, ::IdDict) is
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-6"></a>6</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">#       only exposed for specialization by libraries
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-7"></a>7</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-8"></a>8</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">&quot;&quot;&quot;
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-9"></a>9</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    deepcopy(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-10"></a>10</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-11"></a>11</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">Create a deep copy of `x`: everything is copied recursively, resulting in a fully
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-12"></a>12</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">independent object. For example, deep-copying an array produces a new array whose elements
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-13"></a>13</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">are deep copies of the original elements. Calling `deepcopy` on an object should generally
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-14"></a>14</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">have the same effect as serializing and then deserializing it.
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-15"></a>15</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-16"></a>16</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">While it isn&#39;t normally necessary, user-defined types can override the default `deepcopy`
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-17"></a>17</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">behavior by defining a specialized version of the function
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-18"></a>18</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">`deepcopy_internal(x::T, dict::IdDict)` (which shouldn&#39;t otherwise be used),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-19"></a>19</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">where `T` is the type to be specialized for, and `dict` keeps track of objects copied
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-20"></a>20</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">so far within the recursion. Within the definition, `deepcopy_internal` should be used
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-21"></a>21</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">in place of `deepcopy`, and the `dict` variable should be
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-22"></a>22</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">updated as appropriate before returning.
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-23"></a>23</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">&quot;&quot;&quot;
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-24"></a>24</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-25"></a>25</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    isbitstype(typeof(x)) &amp;&amp; return x
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-26"></a>26</td>
+          <td></td>
+          <td>6 (15.79%)</td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy-26"></a>
+              6 (15.79%) samples spent in deepcopy<br />
+              0 (ex.),
+              1 (16.67%) (incl.)
+              when called from
+              find_used_nodes!
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-14">line 14</a><br />
+              0 (ex.),
+              5 (83.33%) (incl.)
+              when called from
+              find_used_nodes!
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-13">line 13</a><br />
+            </div>
+            <div class="callees">
+              5 (83.33%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-92">deepcopy_internal</a><br />
+              1 (16.67%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-52">deepcopy_internal</a><br />
+            </div>
+            <span class="code">    return deepcopy_internal(x, IdDict())::typeof(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-27"></a>27</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-28"></a>28</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-29"></a>29</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">deepcopy_internal(x::Union{Symbol,Core.MethodInstance,Method,GlobalRef,DataType,Union,UnionAll,Task,Regex},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-30"></a>30</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                  stackdict::IdDict) = x
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-31"></a>31</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">deepcopy_internal(x::Tuple, stackdict::IdDict) =
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-32"></a>32</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ntuple(i-&gt;deepcopy_internal(x[i], stackdict), length(x))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-33"></a>33</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">deepcopy_internal(x::Module, stackdict::IdDict) = error(&quot;deepcopy of Modules not supported&quot;)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-34"></a>34</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-35"></a>35</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy_internal(x::SimpleVector, stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-36"></a>36</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if haskey(stackdict, x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-37"></a>37</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        return stackdict[x]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-38"></a>38</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-39"></a>39</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    y = Core.svec(Any[deepcopy_internal(x[i], stackdict) for i = 1:length(x)]...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-40"></a>40</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    stackdict[x] = y
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-41"></a>41</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return y
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-42"></a>42</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-43"></a>43</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-44"></a>44</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy_internal(x::String, stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-45"></a>45</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if haskey(stackdict, x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-46"></a>46</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        return stackdict[x]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-47"></a>47</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-48"></a>48</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    y = GC.@preserve x unsafe_string(pointer(x), sizeof(x))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-49"></a>49</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    stackdict[x] = y
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-50"></a>50</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return y
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-51"></a>51</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-52"></a>52</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-52"></a>
+              6 (15.79%) samples spent in deepcopy_internal<br />
+              0 (ex.),
+              1 (16.67%) (incl.)
+              when called from
+              deepcopy
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-26">line 26</a><br />
+              3 (100.00%) (ex.),
+              6 (100.00%) (incl.)
+              when called from
+              _deepcopy_array_t
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-105">line 105</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-53"></a>53</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy_internal(@nospecialize(x), stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-54"></a>54</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    T = typeof(x)::DataType
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-55"></a>55</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    nf = nfields(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-56"></a>56</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if T.mutable
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-57"></a>57</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        if haskey(stackdict, x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-58"></a>58</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            return stackdict[x]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-59"></a>59</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-60"></a>60</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        y = ccall(:jl_new_struct_uninit, Any, (Any,), T)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-61"></a>61</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        stackdict[x] = y
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-62"></a>62</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        for i in 1:nf
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-63"></a>63</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            if isdefined(x, i)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-64"></a>64</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                xi = getfield(x, i)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-65"></a>65</td>
+          <td>3 (7.89%)</td>
+          <td>16 (42.11%)</td>
+          <td>
+            <div class="callees">
+              6 (37.50%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-87">deepcopy_internal</a><br />
+            </div>
+            <span class="code">                xi = deepcopy_internal(xi, stackdict)::typeof(xi)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-66"></a>66</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                ccall(:jl_set_nth_field, Cvoid, (Any, Csize_t, Any), y, i-1, xi)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-67"></a>67</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-68"></a>68</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-69"></a>69</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    elseif nf == 0 || isbitstype(T)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-70"></a>70</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        y = x
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-71"></a>71</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-72"></a>72</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        flds = Vector{Any}(undef, nf)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-73"></a>73</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        for i in 1:nf
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-74"></a>74</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            if isdefined(x, i)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-75"></a>75</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                xi = getfield(x, i)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-76"></a>76</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                xi = deepcopy_internal(xi, stackdict)::typeof(xi)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-77"></a>77</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                flds[i] = xi
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-78"></a>78</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-79"></a>79</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                nf = i - 1 # rest of tail must be undefined values
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-80"></a>80</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">                break
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-81"></a>81</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-82"></a>82</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-83"></a>83</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        y = ccall(:jl_new_structv, Any, (Any, Ptr{Any}, UInt32), T, flds, nf)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-84"></a>84</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-85"></a>85</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return y::T
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-86"></a>86</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-87"></a>87</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-87"></a>
+              6 (15.79%) samples spent in deepcopy_internal<br />
+              0 (ex.),
+              6 (100.00%) (incl.)
+              when called from
+              deepcopy_internal
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-65">line 65</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-88"></a>88</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy_internal(x::Array, stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-89"></a>89</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if haskey(stackdict, x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-90"></a>90</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        return stackdict[x]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-91"></a>91</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-92"></a>92</td>
+          <td></td>
+          <td>18 (47.37%)</td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-92"></a>
+              5 (13.16%) samples spent in deepcopy_internal<br />
+              0 (ex.),
+              5 (100.00%) (incl.)
+              when called from
+              deepcopy
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-26">line 26</a><br />
+            </div>
+            <div class="callees">
+              6 (33.33%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-_deepcopy_array_t-94">_deepcopy_array_t</a><br />
+              1 (5.56%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-_deepcopy_array_t-97">_deepcopy_array_t</a><br />
+              0
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-_deepcopy_array_t-94">_deepcopy_array_t</a><br />
+            </div>
+            <span class="code">    _deepcopy_array_t(x, eltype(x), stackdict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-93"></a>93</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-94"></a>94</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-_deepcopy_array_t-94"></a>
+              6 (15.79%) samples spent in _deepcopy_array_t<br />
+              1 (100.00%) (ex.),
+              5 (83.33%) (incl.)
+              when called from
+              deepcopy_internal
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-92">line 92</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-95"></a>95</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function _deepcopy_array_t(@nospecialize(x), T, stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-96"></a>96</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if isbitstype(T)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-97"></a>97</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="call-sites">
+              <a name="S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-_deepcopy_array_t-97"></a>
+              1 (2.63%) samples spent in _deepcopy_array_t<br />
+              0 (ex.),
+              1 (100.00%) (incl.)
+              when called from
+              deepcopy_internal
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-92">line 92</a><br />
+            </div>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="array-jl-c47123b411cfc898d08c-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-array-jl-copy-371">copy</a><br />
+            </div>
+            <span class="code">        return (stackdict[x]=copy(x))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-98"></a>98</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-99"></a>99</td>
+          <td>1 (2.63%)</td>
+          <td>1 (2.63%)</td>
+          <td>
+            <span class="code">    dest = similar(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-100"></a>100</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="iddict-jl-5d3ebb672e6c71f238c2-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-iddict-jl-setindex-70">setindex!</a><br />
+            </div>
+            <span class="code">    stackdict[x] = dest
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-101"></a>101</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    for i = 1:(length(x)::Int)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-102"></a>102</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        if ccall(:jl_array_isassigned, Cint, (Any, Csize_t), x, i-1) != 0
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-103"></a>103</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            xi = ccall(:jl_arrayref, Any, (Any, Csize_t), x, i-1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-104"></a>104</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            if !isbits(xi)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-105"></a>105</td>
+          <td></td>
+          <td>15 (39.47%)</td>
+          <td>
+            <div class="callees">
+              6 (40.00%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy_internal-52">deepcopy_internal</a><br />
+            </div>
+            <span class="code">                xi = deepcopy_internal(xi, stackdict)::typeof(xi)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-106"></a>106</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-107"></a>107</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">            ccall(:jl_arrayset, Cvoid, (Any, Any, Csize_t), dest, xi, i-1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-108"></a>108</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-109"></a>109</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-110"></a>110</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return dest
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-111"></a>111</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-112"></a>112</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-113"></a>113</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function deepcopy_internal(x::Union{Dict,IdDict}, stackdict::IdDict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-114"></a>114</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if haskey(stackdict, x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-115"></a>115</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        return stackdict[x]::typeof(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-116"></a>116</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-117"></a>117</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-118"></a>118</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if isbitstype(eltype(x))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-119"></a>119</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        return (stackdict[x] = copy(x))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-120"></a>120</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-121"></a>121</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-122"></a>122</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    dest = empty(x)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-123"></a>123</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    stackdict[x] = dest
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-124"></a>124</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    for (k, v) in x
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-125"></a>125</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        dest[deepcopy_internal(k, stackdict)] = deepcopy_internal(v, stackdict)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-126"></a>126</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-127"></a>127</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    dest
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Ldeepcopy-jl-68eeb2b23a6970015bf5-line.html-128"></a>128</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

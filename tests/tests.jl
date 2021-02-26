@@ -1,23 +1,27 @@
-include(joinpath(@__DIR__, "header.jl"))
-SAD = SpAutoDiff
-
-using BenchmarkTools
+include(joinpath(@__DIR__, "../src/naked_SpAutoDiff.jl"))
+using Debugger, BenchmarkTools
 
 function test()
-  r = rand(3, 2)
-  a = SAD.Tensor(r)
-  b = SAD.Tensor(r)
-  #c = sum((a ./ 2) .^ 2)
-  #c = (a .^ 2) ./ 2
-  #c = reduce(vcat, [a, b, b])
-  c = a[2:3, 2]
-  #c = a .^ SAD.Tensor(2.0)
-  #c = sum(a)
-  display(c)
-  println(repeat("#", 80))
+  # test matrix multiplication
+  a, b = Tensor(randn(2, 5)), Tensor(randn(5, 3))
+  @assert isapprox(
+    compute_jacobian((a * b), a),
+    reshape(jacobian_gen(a -> a * b.value)(a.value), :, length(a.value)),
+  )
+  @assert isapprox(
+    compute_jacobian((a * b), b),
+    reshape(jacobian_gen(b -> a.value * b)(b.value), :, length(b.value)),
+  )
 
-  display(collect(SAD.compute_jacobian(c, a)))
-  display(a)
+  A = Tensor(randn(3, 3))
+  x = Tensor(randn(3))
+  v = A * x
+  c = sum(v .^ 2)
+
+  global J, H = compute_hessian(c, x)
+  display(J)
+  display(isa(H, AbstractArray) ? collect(H) : H)
+
   return
 end
 test()

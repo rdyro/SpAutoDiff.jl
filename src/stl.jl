@@ -21,5 +21,3 @@ function until(sig1, sig2; scale::Real = 1, use_outer_max::Bool = false)
     return lsemaxish(v; scale = scale)
   end
 end
-# TODO: elementwise max.(x, 0)
-# TODO: unitary functions: log, tan, exp

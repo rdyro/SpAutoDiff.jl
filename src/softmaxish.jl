@@ -2,7 +2,7 @@
 function softmax(x::AbstractArray{T,1}; scale::Real = 1) where {T}
   xmax, xidx = findmax(x)
   if isinf(scale)
-    z = ones(T, length(x))
+    z = zeros(T, length(x))
     z[xidx] = T(1)
     return z
   end

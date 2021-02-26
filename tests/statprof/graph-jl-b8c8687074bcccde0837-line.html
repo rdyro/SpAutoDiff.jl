@@ -1,0 +1,2339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="statprofiler.css">
+
+    <title>StatProfilerHTML.jl: /home/rdyro/Dropbox/stanford/allstate/AutonomousRiskFramework/SpAutoDiff.jl/src/graph.jl</title>
+  </head>
+  <body>
+<div class="report-header">
+  <div class="backlink"><a href="index.html">Report index</a></div>
+  <div class="report-title">StatProfilerHTML.jl report</div>
+  <div class="generated-on">Generated on Mon 22 Feb 2021 04:02:21 PM PST</div>
+</div>
+
+    <div id="body-content">
+      <table>
+        <caption>File source code</caption>
+        <tr>
+          <th>Line</td>
+          <th>Exclusive</th>
+          <th>Inclusive</th>
+          <th>Code</th>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-1"></a>1</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-find_used_nodes-1"></a>
+              7 (18.42%) samples spent in find_used_nodes!<br />
+              0 (ex.),
+              7 (100.00%) (incl.)
+              when called from
+              find_used_nodes!
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-22">line 22</a><br />
+              0 (ex.),
+              7 (100.00%) (incl.)
+              when called from
+              find_used_nodes
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-36">line 36</a><br />
+            </div>
+            <span class="code">##^# graph differentiation #####################################################
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-2"></a>2</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function find_used_nodes!(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-3"></a>3</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  colormap::Dict{Tensor{T},Bool},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-4"></a>4</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  node::Tensor{T},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-5"></a>5</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  input::Tensor{T},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-6"></a>6</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-7"></a>7</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  if node == input
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-8"></a>8</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    colormap[node] = true
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-9"></a>9</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-10"></a>10</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-11"></a>11</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-12"></a>12</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  tensor_parents = filter(node_ -&gt; isa(node_, Tensor), node.parents)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-13"></a>13</td>
+          <td></td>
+          <td>5 (13.16%)</td>
+          <td>
+            <div class="callees">
+              5 (100.00%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy-26">deepcopy</a><br />
+            </div>
+            <span class="code">  tensor_parents_orgs = deepcopy(tensor_parents)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-14"></a>14</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="deepcopy-jl-68eeb2b23a6970015bf5-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-deepcopy-jl-deepcopy-26">deepcopy</a><br />
+            </div>
+            <span class="code">  node_org = deepcopy(node)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-15"></a>15</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-16"></a>16</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  if length(tensor_parents) == 0
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-17"></a>17</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    colormap[node] = false
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-18"></a>18</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    return
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-19"></a>19</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-20"></a>20</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-21"></a>21</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  for node_ in tensor_parents
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-22"></a>22</td>
+          <td></td>
+          <td>39 (102.63%)</td>
+          <td>
+            <div class="callees">
+              7 (17.95%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-find_used_nodes-1">find_used_nodes!</a><br />
+            </div>
+            <span class="code">    find_used_nodes!(colormap, node_, input)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-23"></a>23</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-24"></a>24</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-25"></a>25</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="abstractarray-jl-09f7e8f171d84843df4d-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-abstractarray-jl-map-2162">map</a><br />
+            </div>
+            <span class="code">  if any(map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-26"></a>26</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    node_ -&gt; haskey(colormap, node_) &amp;&amp; colormap[node_],
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-27"></a>27</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    tensor_parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-28"></a>28</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  ))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-29"></a>29</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    colormap[node] = true
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-30"></a>30</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-31"></a>31</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-32"></a>32</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-33"></a>33</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-34"></a>34</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function find_used_nodes(node::Tensor{T}, input::Tensor{T}) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-35"></a>35</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  colormap = Dict{Tensor{T},Bool}()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-36"></a>36</td>
+          <td></td>
+          <td>7 (18.42%)</td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-find_used_nodes-36"></a>
+              7 (18.42%) samples spent in find_used_nodes<br />
+              0 (ex.),
+              7 (100.00%) (incl.)
+              when called from
+              #compute_jacobian#2378
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-68">line 68</a><br />
+            </div>
+            <div class="callees">
+              7 (100.00%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-find_used_nodes-1">find_used_nodes!</a><br />
+            </div>
+            <span class="code">  find_used_nodes!(colormap, node, input)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-37"></a>37</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return colormap
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-38"></a>38</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-39"></a>39</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-toposort-39"></a>
+              1 (2.63%) samples spent in toposort<br />
+              0 (ex.),
+              1 (100.00%) (incl.)
+              when called from
+              #compute_jacobian#2378
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-73">line 73</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-40"></a>40</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function toposort(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-41"></a>41</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  nodes::Vector{Tensor{T}},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-42"></a>42</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  to_consider::Set{Tensor{T}} = Set{Tensor{T}}(),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-43"></a>43</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-44"></a>44</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  to_sort = Set{Tensor{T}}(nodes)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-45"></a>45</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  already_sorted = Set{Tensor{T}}()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-46"></a>46</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  ordered = Tensor{T}[]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-47"></a>47</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  while length(to_sort) &gt; 0
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-48"></a>48</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    for node in to_sort
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-49"></a>49</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      if all(map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-50"></a>50</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        parent -&gt; !in(parent, to_consider) || in(parent, already_sorted),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-51"></a>51</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        node.parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-52"></a>52</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      ))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-53"></a>53</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        push!(already_sorted, node)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-54"></a>54</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        push!(ordered, node)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-55"></a>55</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="set-jl-f41fc33c62883668b651-line.html#S-usr-local-julia-1-5-1-bin-share-julia-base-set-jl-iterate-78">iterate</a><br />
+            </div>
+            <span class="code">        pop!(to_sort, node)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-56"></a>56</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-57"></a>57</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-58"></a>58</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-59"></a>59</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return ordered
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-60"></a>60</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-61"></a>61</td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-compute_jacobian-2378-61"></a>
+              9 (23.68%) samples spent in #compute_jacobian#2378<br />
+              0 (ex.),
+              9 (100.00%) (incl.)
+              when called from
+              compute_jacobian
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#Lgraph-jl-b8c8687074bcccde0837-line.html-67">line 67</a><br />
+            </div>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-62"></a>62</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function compute_jacobian(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-63"></a>63</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  output::Tensor{T},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-64"></a>64</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  input::Tensor{T};
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-65"></a>65</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  jacobian::Union{AbstractArray{T},T,Nothing} = T(1),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-66"></a>66</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-67"></a>67</td>
+          <td></td>
+          <td>9 (23.68%)</td>
+          <td>
+            <div class="call-sites">
+              <a name="S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-compute_jacobian-67"></a>
+              9 (23.68%) samples spent in compute_jacobian<br />
+              0 (ex.),
+              9 (100.00%) (incl.)
+              when called from
+              g_fn!
+              <a href="optimization-jl-f93399d1369d0123b3ef-line.html#Loptimization-jl-f93399d1369d0123b3ef-line.html-33">line 33</a><br />
+            </div>
+            <div class="callees">
+              9 (100.00%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-compute_jacobian-2378-61">#compute_jacobian#2378</a><br />
+            </div>
+            <span class="code">  jacobian = jacobian != nothing ? jacobian : T(1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-68"></a>68</td>
+          <td></td>
+          <td>7 (18.42%)</td>
+          <td>
+            <div class="callees">
+              7 (100.00%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-find_used_nodes-36">find_used_nodes</a><br />
+            </div>
+            <span class="code">  colormap = find_used_nodes(output, input)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-69"></a>69</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  jacobians =
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-70"></a>70</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    Dict{Tensor{T},Union{T,AbstractArray{T},Nothing}}(input =&gt; jacobian)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-71"></a>71</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  nodes = collect(keys(colormap))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-72"></a>72</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  to_consider = Set(keys(colormap))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-73"></a>73</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="graph-jl-b8c8687074bcccde0837-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-graph-jl-toposort-39">toposort</a><br />
+            </div>
+            <span class="code">  nodes = toposort(nodes, to_consider)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-74"></a>74</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  for node in nodes
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-75"></a>75</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    (node == input) &amp;&amp; (continue)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-76"></a>76</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J = nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-77"></a>77</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    mask = length(node.parents) &gt; 0 ?
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-78"></a>78</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-79"></a>79</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      parent -&gt; isa(parent, Tensor) &amp;&amp; get(colormap, parent, false),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-80"></a>80</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      node.parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-81"></a>81</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ) :
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-82"></a>82</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      Bool[]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-83"></a>83</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if length(mask) &gt; 0 &amp;&amp; any(mask)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-84"></a>84</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      for (i, val) in enumerate(mask)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-85"></a>85</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        (!val) &amp;&amp; (continue)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-86"></a>86</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-87"></a>87</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # determine jacobian arguments
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-88"></a>88</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        parameters = node.parameters != nothing ? node.parameters : ()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-89"></a>89</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        args = map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-90"></a>90</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          parent -&gt; isa(parent, Tensor) ? parent.value : parent,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-91"></a>91</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          node.parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-92"></a>92</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        )
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-93"></a>93</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-94"></a>94</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # compute the specific Dg of a particular parent
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-95"></a>95</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        if isa(node.jacobian_fns, AbstractArray)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-96"></a>96</td>
+          <td></td>
+          <td>1 (2.63%)</td>
+          <td>
+            <div class="callees">
+              1 (100.00%)
+              samples spent calling
+              <a href="rules-jl-f5962fe6cc151f625c0e-line.html#S-home-rdyro-Dropbox-stanford-allstate-AutonomousRiskFramework-SpAutoDiff-jl-src-rules-jl-2319-569">#2319</a><br />
+            </div>
+            <span class="code">          Dg = node.jacobian_fns[i](node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-97"></a>97</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-98"></a>98</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Dg = node.jacobian_fns(i, node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-99"></a>99</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-100"></a>100</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-101"></a>101</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # obtain the cached Df
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-102"></a>102</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        Df = jacobians[node.parents[i]]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-103"></a>103</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-104"></a>104</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # apply chain rule
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-105"></a>105</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        J_ = jacobian_chain_rule(Dg, Df)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-106"></a>106</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-107"></a>107</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # sum jacobians
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-108"></a>108</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        (J_ != nothing) &amp;&amp; (J = J != nothing ? J + J_ : J_)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-109"></a>109</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-110"></a>110</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      jacobians[node] = J
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-111"></a>111</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-112"></a>112</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      jacobians[node] = nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-113"></a>113</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-114"></a>114</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-115"></a>115</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return jacobians[output]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-116"></a>116</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-117"></a>117</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-118"></a>118</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function compute_hessian(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-119"></a>119</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  output::Tensor{T},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-120"></a>120</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  input::Tensor{T};
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-121"></a>121</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  jacobian::Union{AbstractArray{T},T,Nothing} = T(1),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-122"></a>122</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  hessian::Union{AbstractArray{T},T,Nothing} = nothing,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-123"></a>123</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-124"></a>124</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  jacobian = jacobian != nothing ? jacobian :
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-125"></a>125</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    sparse(T(1) * I, length(input), length(input))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-126"></a>126</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  hessian = hessian != nothing ? hessian : nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-127"></a>127</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  colormap = find_used_nodes(output, input)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-128"></a>128</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-129"></a>129</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  jacobians =
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-130"></a>130</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    Dict{Tensor{T},Union{T,AbstractArray{T},Nothing}}(input =&gt; jacobian)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-131"></a>131</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  hessians = Dict{Tensor{T},Union{T,AbstractArray{T},Nothing}}(input =&gt; hessian)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-132"></a>132</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-133"></a>133</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  nodes = collect(keys(colormap))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-134"></a>134</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  to_consider = Set(keys(colormap))
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-135"></a>135</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  nodes = toposort(nodes, to_consider)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-136"></a>136</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  for node in nodes
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-137"></a>137</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    (node == input) &amp;&amp; (continue)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-138"></a>138</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    J, H = nothing, nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-139"></a>139</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    mask = length(node.parents) &gt; 0 ?
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-140"></a>140</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-141"></a>141</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      parent -&gt; isa(parent, Tensor) &amp;&amp; get(colormap, parent, false),
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-142"></a>142</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      node.parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-143"></a>143</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    ) :
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-144"></a>144</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      Bool[]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-145"></a>145</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    if length(mask) &gt; 0 &amp;&amp; any(mask)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-146"></a>146</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      for (i, val) in enumerate(mask)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-147"></a>147</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        (!val) &amp;&amp; (continue)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-148"></a>148</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-149"></a>149</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # determine jacobian arguments
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-150"></a>150</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        parameters = node.parameters != nothing ? node.parameters : ()
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-151"></a>151</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        args = map(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-152"></a>152</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          parent -&gt; isa(parent, Tensor) ? parent.value : parent,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-153"></a>153</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          node.parents,
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-154"></a>154</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        )
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-155"></a>155</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-156"></a>156</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # compute the specific Dg and Hf of a particular parent
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-157"></a>157</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        if isa(node.jacobian_fns, AbstractArray)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-158"></a>158</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Dg = node.jacobian_fns[i](node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-159"></a>159</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-160"></a>160</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Dg = node.jacobian_fns(i, node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-161"></a>161</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-162"></a>162</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        if isa(node.hessian_fns, AbstractArray)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-163"></a>163</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Hg = node.hessian_fns[i](node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-164"></a>164</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        elseif isa(node.hessian_fns, Function)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-165"></a>165</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Hg = node.hessian_fns(i, node.cache, args...; parameters...)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-166"></a>166</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-167"></a>167</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">          Hg = nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-168"></a>168</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-169"></a>169</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-170"></a>170</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # obtain the cached Df and Hf &amp; apply chain rule
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-171"></a>171</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        Df, Hf = jacobians[node.parents[i]], hessians[node.parents[i]]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-172"></a>172</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        J_, H_ = jacobian_chain_rule(Dg, Df), hessian_chain_rule(Dg, Hg, Df, Hf)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-173"></a>173</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-174"></a>174</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        # sum jacobians
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-175"></a>175</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        (J_ != nothing) &amp;&amp; (J = J != nothing ? J + J_ : J_)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-176"></a>176</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">        (H_ != nothing) &amp;&amp; (H = H != nothing ? H + H_ : H_)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-177"></a>177</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-178"></a>178</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      jacobians[node], hessians[node] = J, H
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-179"></a>179</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-180"></a>180</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      jacobians[node], hessians[node] = nothing, nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-181"></a>181</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-182"></a>182</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-183"></a>183</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return jacobians[output], hessians[output]
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-184"></a>184</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-185"></a>185</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">##$#############################################################################
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-186"></a>186</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">##^# utility functions #########################################################
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-187"></a>187</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function jacobian_chain_rule(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-188"></a>188</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Dg::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-189"></a>189</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Df::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-190"></a>190</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-191"></a>191</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  (Dg == nothing || Df == nothing) &amp;&amp; (return nothing)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-192"></a>192</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return Dg * Df
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-193"></a>193</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-194"></a>194</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-195"></a>195</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">function hessian_chain_rule(
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-196"></a>196</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Dg::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-197"></a>197</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Hg::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-198"></a>198</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Df::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-199"></a>199</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Hf::Union{&lt;:Real,AbstractArray{&lt;:Real},UniformScaling,Nothing},
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-200"></a>200</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">) where {T}
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-201"></a>201</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  cond1 = !(Df == nothing || Hg == nothing)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-202"></a>202</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  cond2 = !(Dg == nothing || Hf == nothing)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-203"></a>203</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  (!cond1 &amp;&amp; !cond2) &amp;&amp; (return nothing)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-204"></a>204</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-205"></a>205</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  p = size(Df) == () ? size(Hg, 1) : size(Dg, 1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-206"></a>206</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  if cond1
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-207"></a>207</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    Hh1 =
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-208"></a>208</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">      kron(size(Df) == () ? Df : sparse(Df&#39;), sparse(1.0 * I, p, p)) * Hg * Df
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-209"></a>209</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  else
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-210"></a>210</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">    Hh1 = nothing
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-211"></a>211</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-212"></a>212</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-213"></a>213</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  (!cond2) &amp;&amp; (return Hh1)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-214"></a>214</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-215"></a>215</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  n = size(Df) == () ? div(size(Hf, 1), size(Dg, 2)) : size(Df, 2)
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-216"></a>216</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Hh2 = kron(Dg, sparse(1.0 * I, n, n)) * Hf
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-217"></a>217</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-218"></a>218</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  Hh = Hh1 == nothing ? Hh2 : Hh1 + Hh2
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-219"></a>219</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">  return Hh
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-220"></a>220</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">end
+</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a name="Lgraph-jl-b8c8687074bcccde0837-line.html-221"></a>221</td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="code">##$#############################################################################
+</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -40,6 +40,7 @@ function lsemaxish_hessian(x::AbstractArray{T,1}; scale::Real = 1) where {T}
   Ds *= scale
   #return (scale * x .+ 1) .* Ds + diagm(0 => scale * s) -
   #       scale * (s * (s + Ds * x)' + dot(x, s) * Ds)
+  display(Ds)
   return Ds
 end
 

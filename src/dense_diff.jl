@@ -1,3 +1,11 @@
+##^# imports ###################################################################
+if !@isdefined DifferentiationModule
+  using Zygote
+  const DifferentiationModule = Zygote
+  #using ReverseDiff
+  #const DifferentiationModule = ReverseDiff
+end
+##$#############################################################################
 ##^# utils #####################################################################
 function reduce_sum(x; dims = nothing)
   @assert dims != nothing
@@ -8,6 +16,12 @@ function stack(x_list; dims = 1)
   @assert length(dims) == 1
   if dims == 1
     return reduce(vcat, [reshape(x, 1, size(x)...) for x in x_list])
+  elseif dims == ndims(x_list[1]) + 1
+    return reshape(
+      reduce(hcat, [reshape(x, :, 1) for x in x_list]),
+      size(x_list[1])...,
+      :,
+    )
   else
     return reduce(
       (a, b) -> cat(a, b; dims = dims),
@@ -31,21 +45,24 @@ function jacobian_gen(fn; argnums = (), bdims = 0)
     end
     @assert typeof(f) <: AbstractArray || typeof(f) <: Number
     if size(f) == () && bdims == 0
-      gs = Zygote.gradient(f_fn, args...)
+      gs = DifferentiationModule.gradient(f_fn, args...)
     elseif size(f) == ()
       if f_fn_ == nothing
         f_fn_ = function (args...)
           return reduce_sum(f_fn(args...); dims = batch_dims)
         end
       end
-      gs = Zygote.gradient(f_fn_, args...)
+      gs = DifferentiationModule.gradient(f_fn_, args...)
     else
       if fi_fn == nothing
         fi_fn = function (i, args...)
           return reshape(reduce_sum(f_fn(args...); dims = batch_dims), :)[i]
         end
       end
-      gs_list = [Zygote.gradient(fi_fn, i, args...)[2:end] for i in 1:length(f)]
+      gs_list = [
+        DifferentiationModule.gradient(fi_fn, i, args...)[2:end]
+        for i in 1:length(f)
+      ]
       gs = [stack(g) for g in zip(gs_list...)]
       gs = [reshape(g, size(f)..., size(g)[2:end]...) for g in gs]
     end
@@ -62,10 +79,11 @@ end
 function hessian_gen(fn; argnums = ())
   return function (args...)
     if length(args) == 1
-      hs = Zygote.hessian(fn, args[1])
+      hs = DifferentiationModule.hessian(fn, args[1])
     else
       @assert argnums == 1
-      hs = Zygote.hessian(arg1 -> fn(arg1, args[2:end]...), args[1])
+      hs =
+        DifferentiationModule.hessian(arg1 -> fn(arg1, args[2:end]...), args[1])
     end
     return hs
   end
