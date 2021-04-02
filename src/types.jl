@@ -44,3 +44,6 @@ lastindex(a::Tensor) = length(a.value)
 lastindex(a::Tensor, idx::Int) = size(a.value, idx)
 ndims(a::Tensor) = ndims(a.value)
 collect(a::Tensor) = collect(a.value)
+
+import Base: convert
+convert(::Type{T}, a::Tensor{T}) where {T <: Real} = T(a.value)

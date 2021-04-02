@@ -23,8 +23,9 @@ macro add_rule(fn_, jacobian_fns_, hessian_fns_ = nothing)
       insert!(fn_head.args[1].args, 2, Expr(:parameters, :(parameters...)))
     end
     fn_args_is_tensor = map(
-      arg -> isa(arg, Symbol) ? arg == :Tensor :
-          arg.head == :curly && arg.args[1] == :Tensor,
+      arg ->
+        isa(arg, Symbol) ? arg == :Tensor :
+        arg.head == :curly && arg.args[1] == :Tensor,
       fn_args_types,
     )
   end
@@ -45,8 +46,9 @@ macro add_rule(fn_, jacobian_fns_, hessian_fns_ = nothing)
     fn_alias,
     :cache,
     map(
-      i -> fn_args_is_tensor[i] ? Expr(:., fn_args_names[i], :(:value)) :
-          fn_args_names[i],
+      i ->
+        fn_args_is_tensor[i] ? Expr(:., fn_args_names[i], :(:value)) :
+        fn_args_names[i],
       1:length(fn_args),
     )...,
   )
@@ -140,10 +142,7 @@ end [
 
 @add_rule function -(cache, a, b)
   return a - b
-end [
-  (cache, a, b) -> 1.0 * I,
-  (cache, a, b) -> -1.0 * I,
-]
+end [(cache, a, b) -> 1.0 * I, (cache, a, b) -> -1.0 * I]
 
 @add_rule function -(cache, a)
   return -a
@@ -174,25 +173,19 @@ end [
 
 @add_rule function *(cache, a, b::UniformScaling)
   return a * b
-end [
-  function (cache, a, b)
-    return b.λ * I
-  end,
-  function (cache, a, b)
-    return nothing
-  end
-]
+end [function (cache, a, b)
+  return b.λ * I
+end, function (cache, a, b)
+  return nothing
+end]
 
 @add_rule function *(cache, a::UniformScaling, b)
   return a * b
-end [
-  function (cache, a, b)
-    return nothing
-  end,
-  function (cache, a, b)
-    return a.λ * I
-  end
-]
+end [function (cache, a, b)
+  return nothing
+end, function (cache, a, b)
+  return a.λ * I
+end]
 
 *(a::Union{Real,AbstractArray}, b::Tensor{T}) where {T} = Tensor{T}(a) * b
 *(a::Tensor{T}, b::Union{AbstractArray,Real}) where {T} = a * Tensor{T}(b)
@@ -210,8 +203,6 @@ import LinearAlgebra: dot, adjoint
 end [
   function (cache, a, b)
     if ndims(a) == 1 && ndims(b) == 1
-      println("hello from a")
-      display(b')
       return b'
     else
       error("That version of [dot] is not yet supported")
@@ -220,8 +211,6 @@ end [
   end,
   function (cache, a, b)
     if ndims(a) == 1 && ndims(b) == 1
-      println("hello from b")
-      display(a')
       return a'
     else
       error("That version of [dot] is not yet supported")
@@ -412,7 +401,7 @@ end [
     idxs = isa(idxs, Colon) ? (1:length(a)) : idxs
     J = collect(size(idxs) == () ? [idxs] : idxs)
     I = collect(1:length(idxs))
-    V = ones(T, length(idxs))
+    V = ones(length(idxs))
     return sparse(I, J, V, length(idxs), length(a))
   end,
   (cache, a, idxs) -> nothing,
@@ -678,34 +667,34 @@ end
 
 ##$#############################################################################
 ##^# maxish rules ##############################################################
-@add_rule function softmaxish(cache, x; scale = 1)
-  return softmaxish(x; scale = scale)
-end Function[(cache, x; scale = 1) -> softmaxish_jacobian(x; scale = scale)]
-
-@add_rule function softminish(cache, x; scale = 1)
-  return softminish(x; scale = scale)
-end Function[(cache, x; scale = 1) -> softmaxish_jacobian(-x; scale = scale)]
-
-@add_rule function softmaxish(cache, x, n; scale = 1)
-  return softmaxish(x, n; scale = scale)
-end [
-  (cache, x, n; scale = 1) -> softmaxish_jacobian(x, n; scale = scale)
-  (cache, x, n; scale = 1) -> nothing
-]
-
-@add_rule function softminish(cache, x, n; scale = 1)
-  return softminish(x, n; scale = scale)
-end [
-  (cache, x, n; scale = 1) -> softmaxish_jacobian(-x, n; scale = scale),
-  (cache, x, n; scale = 1) -> nothing,
-]
-
-function softmaxish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
-  return softmaxish(x, Tensor{T}(n); scale = scale)
-end
-function softminish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
-  return softminish(x, Tensor{T}(n); scale = scale)
-end
+#@add_rule function softmaxish(cache, x; scale = 1)
+#  return softmaxish(x; scale = scale)
+#end Function[(cache, x; scale = 1) -> softmaxish_jacobian(x; scale = scale)]
+#
+#@add_rule function softminish(cache, x; scale = 1)
+#  return softminish(x; scale = scale)
+#end Function[(cache, x; scale = 1) -> softmaxish_jacobian(-x; scale = scale)]
+#
+#@add_rule function softmaxish(cache, x, n; scale = 1)
+#  return softmaxish(x, n; scale = scale)
+#end [
+#  (cache, x, n; scale = 1) -> softmaxish_jacobian(x, n; scale = scale)
+#  (cache, x, n; scale = 1) -> nothing
+#]
+#
+#@add_rule function softminish(cache, x, n; scale = 1)
+#  return softminish(x, n; scale = scale)
+#end [
+#  (cache, x, n; scale = 1) -> softmaxish_jacobian(-x, n; scale = scale),
+#  (cache, x, n; scale = 1) -> nothing,
+#]
+#
+#function softmaxish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
+#  return softmaxish(x, Tensor{T}(n); scale = scale)
+#end
+#function softminish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
+#  return softminish(x, Tensor{T}(n); scale = scale)
+#end
 
 @add_rule function lsemaxish(cache, x; scale = 1)
   return lsemaxish(x; scale = scale)
@@ -717,5 +706,44 @@ end Function[(cache, x; scale = 1) -> lsemaxish_jacobian(x; scale = scale)] Func
 
 @add_rule function lseminish(cache, x; scale = 1)
   return lseminish(x; scale = scale)
-end Function[(cache, x; scale = 1) -> lsemaxish_jacobian(-x; scale = scale)]
+end Function[(cache, x; scale = 1) -> lsemaxish_jacobian(-x; scale = scale)] Function[(
+  cache,
+  x;
+  scale = 1,
+) -> -lsemaxish_hessian(-x; scale = scale)]
+
+@add_rule function lsemaxish(cache, x, n; scale = 1)
+  return lsemaxish(x, n; scale = scale)
+end Function[(
+  cache,
+  x,
+  n;
+  scale = 1,
+) -> lsemaxish_jacobian(x, n; scale = scale)] Function[(
+  cache,
+  x,
+  n;
+  scale = 1,
+) -> lsemaxish_hessian(x, n; scale = scale)]
+
+@add_rule function lseminish(cache, x, n; scale = 1)
+  return lseminish(x, n; scale = scale)
+end Function[(
+  cache,
+  x,
+  n;
+  scale = 1,
+) -> lsemaxish_jacobian(-x, n; scale = scale)] Function[(
+  cache,
+  x,
+  n;
+  scale = 1,
+) -> -lsemaxish_hessian(-x, n; scale = scale)]
+
+function lsemaxish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
+  return lsemaxish(x, Tensor{T}(T(n)); scale = scale)
+end
+function lseminish(x::Tensor{T}, n::Int; scale::Real = 1) where {T}
+  return lseminish(x, Tensor{T}(T(n)); scale = scale)
+end
 ##$#############################################################################

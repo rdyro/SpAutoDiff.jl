@@ -10,7 +10,9 @@ function lsemaxish(x::AbstractArray{T,1}; scale::Real = 1) where {T}
 end
 
 function lsemaxish(x::AbstractArray{T,1}, nb::Real; scale::Real = 1) where {T}
+  #nb = isa(nb, Tensor) ? Int(nb.value) : Int(nb)
   nb = Int(nb)
+  #@printf("nb = %d\n", nb)
   @assert 1 <= nb <= length(x)
   pidx = sortperm(x)
   @views pidx_ = pidx[(end - nb + 1):end]
@@ -34,13 +36,15 @@ function lsemaxish_jacobian(x::AbstractArray{T,1}; scale::Real = 1) where {T}
 end
 
 function lsemaxish_hessian(x::AbstractArray{T,1}; scale::Real = 1) where {T}
+  if isinf(scale)
+    return spzeros(length(x), length(x))
+  end
   s = softmax(x; scale = scale)
   Ds = -s * s'
   Ds[diagind(Ds)] += s
   Ds *= scale
   #return (scale * x .+ 1) .* Ds + diagm(0 => scale * s) -
   #       scale * (s * (s + Ds * x)' + dot(x, s) * Ds)
-  display(Ds)
   return Ds
 end
 
@@ -77,12 +81,13 @@ function lsemaxish_hessian(
   @views x_ = x[pidx_]
 
   H_ = lsemaxish_hessian(x_; scale = scale)
-  return sparse(
+  H = sparse(
     repeat(pidx_; outer = nb),
     repeat(pidx_; inner = nb),
     reshape(H_, :),
     length(x),
     length(x),
   )
+  return H
 end
 ##$#############################################################################

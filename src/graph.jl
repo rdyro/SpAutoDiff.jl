@@ -63,6 +63,7 @@ function compute_jacobian(
   output::Tensor{T},
   input::Tensor{T};
   jacobian::Union{AbstractArray{T},T,UniformScaling{T},Nothing} = nothing,
+  create_graph = false,
 ) where {T}
   jacobian = jacobian != nothing ? jacobian : T(1)
   colormap = find_used_nodes(output, input)
@@ -91,11 +92,14 @@ function compute_jacobian(
 
         # determine jacobian arguments
         parameters = node.parameters != nothing ? node.parameters : ()
-        args = map(
-          #parent -> isa(parent, Tensor) ? parent.value : parent,
-          parent -> isa(parent, Tensor) ? parent : parent,
-          node.parents,
-        )
+        if create_graph
+          args = node.parents
+        else
+          args = map(
+            parent -> isa(parent, Tensor) ? parent.value : parent,
+            node.parents,
+          )
+        end
 
         # compute the specific Dg of a particular parent
         if isa(node.jacobian_fns, AbstractArray)
@@ -126,6 +130,7 @@ function compute_hessian(
   input::Tensor{T};
   jacobian::Union{AbstractArray{T},T,Nothing} = nothing,
   hessian::Union{AbstractArray{T},T,Nothing} = nothing,
+  create_graph = false,
 ) where {T}
   jacobian =
     jacobian != nothing ? jacobian :
@@ -156,12 +161,14 @@ function compute_hessian(
 
         # determine jacobian arguments
         parameters = node.parameters != nothing ? node.parameters : ()
-        #args = map(
-        #  parent -> isa(parent, Tensor) ? parent.value : parent,
-        #  node.parents,
-        #)
-        args =
-          map(parent -> isa(parent, Tensor) ? parent : parent, node.parents)
+        if create_graph
+          args = node.parents
+        else
+          args = map(
+            parent -> isa(parent, Tensor) ? parent.value : parent,
+            node.parents,
+          )
+        end
 
         # compute the specific Dg and Hf of a particular parent
         if isa(node.jacobian_fns, AbstractArray)
@@ -181,7 +188,6 @@ function compute_hessian(
         Df, Hf = jacobians[node.parents[i]], hessians[node.parents[i]]
         J_ = jacobian_chain_rule(Dg, Df)
         m, p = length(args[i]), length(node.value)
-        @bp
         H_ = hessian_chain_rule(m, p, Dg, Hg, Df, Hf)
         #(H_ != nothing) && (display(collect(H_)))
 
@@ -242,7 +248,8 @@ function hessian_chain_rule(
 
   n = size(Df) == () ? div(size(Hf, 1), size(Dg, 2)) : size(Df, 2)
   Hh2 =
-    isa(Dg, UniformScaling) ? Dg.λ * Hf : kron(Dg, sparse(1.0 * I, n, n)) * Hf
+    isa(Dg, UniformScaling) ? Dg.λ * Hf :
+    kron(sparse(Dg), sparse(1.0 * I, n, n)) * Hf
 
   Hh = Hh1 == nothing ? Hh2 : Hh1 + Hh2
 
