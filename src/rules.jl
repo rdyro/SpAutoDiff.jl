@@ -153,7 +153,7 @@ end Function[(cache, a) -> -T(1) * I]
 end [
   function (cache, a, b)
     if length(b) == 1
-      return b * I
+      return size(b) == () ? b * I : b[1] * I
     elseif length(a) == 1
       return reshape(b, :, 1)
     else
@@ -162,7 +162,7 @@ end [
   end,
   function (cache, a, b)
     if length(a) == 1
-      return a * I
+      return size(a) == () ? a * I : a[1] * I
     elseif length(b) == 1
       return reshape(a, :, 1)
     else

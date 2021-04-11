@@ -1,3 +1,6 @@
+using LinearAlgebra, SparseArrays, Printf, Statistics
+using BenchmarkTools#, Debugger, ReverseDiff
+
 #using Revise
 #try
 #  using SpAutoDiff
@@ -10,6 +13,9 @@
 if !isdefined(Main, :SpAutoDiff)
   include(joinpath(@__DIR__, "../src/SpAutoDiff.jl"))
 end
-using LinearAlgebra, SparseArrays, Printf, Statistics
-using BenchmarkTools#, Debugger, ReverseDiff
 SAD = SpAutoDiff
+
+#if !isdefined(Main, :SpAutoDiff)
+#  include(joinpath(@__DIR__, "../src/naked_SpAutoDiff.jl"))
+#  SpAutoDiff = nothing
+#end
