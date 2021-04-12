@@ -14,8 +14,8 @@ Tensor{T}(
   value::Union{<:Real,AbstractArray{<:Real},UniformScaling{<:Real}},
   requires_grad = true,
 ) where {T} = Tensor{T}(
-  #T.(value),
-  value,
+  T.(value),
+  #value,
   requires_grad,
   Tensor{T}[],
   nothing,

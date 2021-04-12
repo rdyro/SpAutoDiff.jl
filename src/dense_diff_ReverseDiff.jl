@@ -23,21 +23,14 @@ function hessian_gen(fn; argnums = ())
     @assert argnums == 1 ||
             argnums == (1,) ||
             (argnums == () && length(args) == 1)
-    if length(args) == 1
-      hs = hessian(fn, args[1]; kwargs...)
-    else
-      hs = hessian(
-        arg1 ->
-          fn(reshape(arg1, size(args[1])...), args[2:end]...; kwargs...),
-        reshape(args[1], :),
-      )
-    end
-    if length(hs) == length(args[1])^2
-      return reshape(hs, length(args[1]), length(args[1]))
+    fn_ = arg1 -> fn(reshape(arg1, size(args[1])...), args[2:end]...; kwargs...)
+    f = fn_(args[1])
+    if size(f) == ()
+      return reshape(hessian(fn_, args[1]), length(args[1]), length(args[1]))
     else
       return reduce(
         vcat,
-        eachslice(reshape(hs, :, length(args[1]), length(args[1])); dims = 1),
+        [hessian(x -> fn_(x)[i], reshape(args[1], :)) for i in 1:length(f)],
       )
     end
   end
