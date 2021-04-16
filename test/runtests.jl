@@ -5,7 +5,7 @@ using Test
 SAD = SpAutoDiff
 
 # params #####################################################
-N_GLOBAL = 5
+N_GLOBAL = 27
 
 # dense derivatives ##########################################
 dd_modules = [
@@ -36,6 +36,7 @@ end
 # derivatives ################################################
 DD = SAD.DenseDiffReverseDiff
 
+r = randn(5)
 unitary_fns = [
   sum,
   x -> sum(x .^ 2),
@@ -44,9 +45,13 @@ unitary_fns = [
   x -> 2 * x,
   x -> x[1:div(length(x), 2)],
   x -> x[1:div(length(x), 2)] .^ 3,
+  x -> kron(sparse(1.123 * I, 4, 4), reshape(x, 3, 9)),
+  x -> kron(reshape(x, 3, 9), sparse(1.123 * I, 4, 4)),
+  x -> kron(spdiagm(r), reshape(x, 3, 9)),
+  x -> kron(reshape(x, 3, 9), spdiagm(r)),
 ]
 
-@testset "SpAutoDiff.jl - Base - Jacobian" begin
+@testset "SpAutoDiff.jl - Jacobian" begin
   n = N_GLOBAL
   x = SAD.Tensor(randn(n))
 
@@ -55,7 +60,7 @@ unitary_fns = [
   end
 end
 
-@testset "SpAutoDiff.jl - Base - Hessian" begin
+@testset "SpAutoDiff.jl - Hessian" begin
   n = N_GLOBAL
   x = SAD.Tensor(randn(n))
 
@@ -73,11 +78,11 @@ end
 
 # STL ########################################################
 stl_fns = [
-           x -> SAD.always(x .- 0.0), 
-           x -> SAD.eventually(x .- 0.0), 
-           x -> SAD.always(x .- 0.0; scale=4.32123), 
-           x -> SAD.eventually(x .- 0.0; scale=4.32123), 
-          ]
+  x -> SAD.always(x .- 0.0),
+  x -> SAD.eventually(x .- 0.0),
+  x -> SAD.always(x .- 0.0; scale = 4.32123),
+  x -> SAD.eventually(x .- 0.0; scale = 4.32123),
+]
 
 @testset "SpAutoDiff.jl - STL" begin
   n = N_GLOBAL
@@ -90,6 +95,22 @@ stl_fns = [
   for fn in stl_fns
     @test SAD.compute_hessian(fn(x), x)[2] ≈ DD.hessian_gen(fn)(x.value)
   end
+end
+
+# implicit differentiation ###################################
+EPS = 1e-7
+k_fn(A, b, x) = A' * (A * x - b) + EPS * x
+F_fn(A, b) = (A' * A + EPS * I) \ (A' * b)
+
+@testset "SpAutoDiff.jl - Implict Differentiation" begin
+  m, n = 3, 1
+  A, b = randn(m, n), randn(m)
+
+  x = F_fn(A, b)
+  @assert norm(k_fn(A, b, x)) < 1e-5
+  @test SAD.implicit_1st((x, A) -> k_fn(A, b, x), x, A) ≈
+        DD.jacobian_gen(A -> F_fn(A, b))(A)
+  return
 end
 
 return

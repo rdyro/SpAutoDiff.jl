@@ -129,7 +129,7 @@ macro add_rule(fn_, jacobian_fns_, hessian_fns_ = nothing)
 end
 ##$#############################################################################
 ##^# linalg operators ##########################################################
-import Base: +, -, *, /, ^, hcat, vcat, sum, dropdims, adjoint
+import Base: +, -, /, ^, hcat, vcat, sum, dropdims, adjoint
 
 @add_rule function +(cache, a, b)
   return a + b
@@ -147,48 +147,6 @@ end [(cache, a, b) -> 1.0 * I, (cache, a, b) -> -1.0 * I]
 @add_rule function -(cache, a)
   return -a
 end Function[(cache, a) -> -T(1) * I]
-
-@add_rule function *(cache, a, b)
-  return a * b
-end [
-  function (cache, a, b)
-    if length(b) == 1
-      return size(b) == () ? b * I : b[1] * I
-    elseif length(a) == 1
-      return reshape(b, :, 1)
-    else
-      return kron(b', sparse(I, size(a, 1), size(a, 1)))
-    end
-  end,
-  function (cache, a, b)
-    if length(a) == 1
-      return size(a) == () ? a * I : a[1] * I
-    elseif length(b) == 1
-      return reshape(a, :, 1)
-    else
-      return kron(sparse(I, size(b, 2), size(b, 2)), a)
-    end
-  end,
-]
-
-@add_rule function *(cache, a, b::UniformScaling)
-  return a * b
-end [function (cache, a, b)
-  return b.λ * I
-end, function (cache, a, b)
-  return nothing
-end]
-
-@add_rule function *(cache, a::UniformScaling, b)
-  return a * b
-end [function (cache, a, b)
-  return nothing
-end, function (cache, a, b)
-  return a.λ * I
-end]
-
-*(a::Union{Real,AbstractArray}, b::Tensor{T}) where {T} = Tensor{T}(a) * b
-*(a::Tensor{T}, b::Union{AbstractArray,Real}) where {T} = a * Tensor{T}(b)
 
 +(a::Union{Real,AbstractArray}, b::Tensor{T}) where {T} = Tensor{T}(a) + b
 +(a::Tensor{T}, b::Union{AbstractArray,Real}) where {T} = a + Tensor{T}(b)
@@ -313,6 +271,109 @@ end Function[function (cache, a; dims)
   #end
   return sparse(1.0 * I, length(a), length(a))
 end]
+##$#############################################################################
+##^# multiplication ############################################################
+import Base: *
+
+@add_rule function *(cache, a, b)
+  return a * b
+end [
+  function (cache, a, b)
+    b = isa(b, UniformScaling) ? b.λ : b
+    if length(b) == 1
+      return sparse(I, length(a), length(a)) * (size(b) == () ? b : b[1])
+    elseif length(a) == 1
+      return reshape(b, :, 1)
+    else
+      return kron(b', sparse(I, size(a, 1), size(a, 1)))
+    end
+  end,
+  function (cache, a, b)
+    a = isa(a, UniformScaling) ? a.λ : a
+    if length(a) == 1
+      return sparse(I, length(b), length(b)) * (size(a) == () ? a : a[1])
+    elseif length(b) == 1
+      return reshape(a, :, 1)
+    else
+      return kron(sparse(I, size(b, 2), size(b, 2)), a)
+    end
+  end,
+]
+
+@add_rule function *(cache, a, b::UniformScaling)
+  return a * b
+end [function (cache, a, b)
+  return b.λ * I
+end, function (cache, a, b)
+  return nothing
+end]
+
+@add_rule function *(cache, a::UniformScaling, b)
+  return a * b
+end [function (cache, a, b)
+  return nothing
+end, function (cache, a, b)
+  return a.λ * I
+end]
+
+*(a::Union{Real,AbstractArray}, b::Tensor{T}) where {T} = Tensor{T}(a) * b
+*(a::Tensor{T}, b::Union{AbstractArray,Real}) where {T} = a * Tensor{T}(b)
+##$#############################################################################
+##^# kronecker product #########################################################
+import Base: kron
+
+function is_diag(x::SparseMatrixCSC)
+  (size(x, 1) == size(x, 2)) || (return false)
+  (length(diag(x).nzval) == length(x.nzval) == size(x, 1)) || (return false)
+  #(length(unique(x.nzval)) == 1) || (return false)
+  return true
+end
+
+@add_rule function kron(cache, a, b::SparseMatrixCSC)
+  return kron(sparse(a), b)
+end [
+  function (cache, a, b)
+    @assert is_diag(b)
+    n = size(b, 1)
+
+    I, J, V = Int[], Int[], Float64[]
+    for i in 1:size(a, 2)
+      append!(J, repeat((size(a, 1) * (i - 1)) .+ (1:size(a, 1)), n))
+      off = size(a, 1) * n^2 * (i - 1)
+      indices = [
+        off .+ (1:n:(n * size(a, 1))) .+ ((n * size(a, 1)) * (j - 1) + j - 1)
+        for j in 1:n
+      ]
+      append!(I, reduce(vcat, indices))
+      append!(V, repeat(b.nzval; inner = size(a, 1)))
+    end
+    return sparse(I, J, V, length(a) * n^2, length(a))
+  end,
+  (cache, a, b) -> nothing,
+]
+
+@add_rule function kron(cache, a::SparseMatrixCSC, b)
+  return kron(a, sparse(b))
+end [
+  (cache, a, b) -> nothing,
+  function (cache, a, b)
+    @assert is_diag(a)
+    n = size(a, 1)
+
+    I, J, V = Int[], Int[], Float64[]
+    for i in 1:n
+      append!(J, 1:length(b))
+      off1 = (i - 1) * (length(b) * n) + (i - 1) * size(b, 1)
+      indices = [
+        off1 .+ (1:size(b, 1)) .+ (j - 1) * size(b, 1) * n
+        for j in 1:size(b, 2)
+      ]
+      append!(I, reduce(vcat, indices))
+      append!(V, a.nzval[i] * ones(length(b)))
+    end
+    return sparse(I, J, V, length(b) * n^2, length(b))
+  end,
+]
 ##$#############################################################################
 ##^# reduce operator ###########################################################
 import Base: reduce

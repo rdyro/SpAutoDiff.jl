@@ -47,3 +47,6 @@ collect(a::Tensor) = collect(a.value)
 
 import Base: convert
 convert(::Type{T}, a::Tensor{T}) where {T <: Real} = T(a.value)
+
+import SparseArrays: sparse
+sparse(x::Tensor{T}) where {T} = sparse(x.value)
