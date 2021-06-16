@@ -146,7 +146,7 @@ end [(cache, a, b) -> 1.0 * I, (cache, a, b) -> -1.0 * I]
 
 @add_rule function -(cache, a)
   return -a
-end Function[(cache, a) -> -T(1) * I]
+end Function[(cache, a) -> -Float64(1) * I]
 
 +(a::Union{Real,AbstractArray}, b::Tensor{T}) where {T} = Tensor{T}(a) + b
 +(a::Tensor{T}, b::Union{AbstractArray,Real}) where {T} = a + Tensor{T}(b)
@@ -247,7 +247,8 @@ end Function[function (cache, a; dims = Colon())
   else
     #val = cache["val"]
     val = sum(a; dims = dims)
-    I, J, V = zeros(Int, length(a)), zeros(Int, length(a)), ones(T, length(a))
+    I, J, V =
+      zeros(Int, length(a)), zeros(Int, length(a)), ones(Float64, length(a))
     mask = [!(dim in dims) for dim in 1:ndims(a)]
     l2c = CartesianIndices(a)
     c2l_reduced = LinearIndices(Tuple(map(s -> 1:s, collect(size(a))[mask])))
