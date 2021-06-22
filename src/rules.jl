@@ -427,7 +427,7 @@ end
 
 function reduce(
   f::Function,
-  arg_list::Vector{Union{Tensor{T},AbstractArray{T},T,Real}},
+  arg_list::Vector{Union{Tensor{T},AbstractArray{T}}},
 ) where {T}
   @assert haskey(reduce_df_map, f)
   global ALIAS_IDX
