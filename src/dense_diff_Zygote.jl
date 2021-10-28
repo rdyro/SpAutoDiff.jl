@@ -1,6 +1,8 @@
 module DenseDiffZygote
 using Zygote
 
+import .._reduce
+
 include(joinpath(@__DIR__, "utils.jl"))
 
 #gradient, hessian = Zygote.gradient, Zygote.hessian
@@ -60,7 +62,7 @@ function jacobian_gen(fn; argnums = ())
     if size(f) == ()
       return reshape(Zygote.gradient(fn_, args[1])[1], 1, length(args[1]))
     else
-      return reduce(
+      return _reduce(
         vcat,
         [
           reshape(gradient(x -> fn_(x)[i], reshape(args[1], :))[1], 1, :)
@@ -82,7 +84,7 @@ function hessian_gen(fn; argnums = ())
     if size(f) == ()
       return reshape(hessian(fn_, args[1]), length(args[1]), length(args[1]))
     else
-      return reduce(
+      return _reduce(
         vcat,
         [hessian(x -> fn_(x)[i], reshape(args[1], :)) for i in 1:length(f)],
       )

@@ -14,7 +14,7 @@ function until(sig1, sig2; scale::Real = 1, outer_max::Bool = false)
       scale = scale,
     ) for i in 1:length(sig1)
   ]
-  v = reduce(vcat, v_list)
+  v = _reduce(vcat, v_list)
   if outer_max
     idx = isa(v, Tensor) ? argmax(v.value) : argmax(v)
     return v_list[idx]
@@ -38,7 +38,7 @@ function until(sig1, sig2, nb::Int; scale::Real = 1, outer_max::Bool = false)
       scale = scale,
     ) for i in 1:length(sig1)
   ]
-  v = reduce(vcat, v_list)
+  v = _reduce(vcat, v_list)
   if outer_max
     idx = isa(v, Tensor) ? argmax(v.value) : argmax(v)
     return v_list[idx]

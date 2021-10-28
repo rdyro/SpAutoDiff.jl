@@ -9,7 +9,7 @@ function test()
   J = SAD.compute_jacobian(c, a)
   display(collect(J))
   f_ = f(a.value)
-  J2 = reduce(
+  J2 = _reduce(
     vcat,
     map(
       i -> reshape(ReverseDiff.gradient(x -> f(x)[i], a.value), 1, :),

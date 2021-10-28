@@ -3,6 +3,8 @@ using FiniteDiff
 gradient = FiniteDiff.finite_difference_jacobian
 hessian = FiniteDiff.finite_difference_hessian
 
+import .._reduce
+
 function jacobian_gen(fn; argnums = 1)
   return function (args...; kwargs...)
     # differentiate wrt to the first argument only
@@ -29,7 +31,7 @@ function hessian_gen(fn; argnums = 1)
     if size(f) == ()
       return reshape(hessian(fn_, args[1]), length(args[1]), length(args[1]))
     else
-      return reduce(
+      return _reduce(
         vcat,
         [hessian(x -> fn_(x)[i], reshape(args[1], :)) for i in 1:length(f)],
       )

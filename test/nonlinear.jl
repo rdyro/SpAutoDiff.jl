@@ -8,7 +8,7 @@ function test()
   #f = a'
   #display(a)
   #display(f)
-  #J2 = reduce(
+  #J2 = _reduce(
   #  vcat,
   #  map(i -> vec(ReverseDiff.gradient(a -> vec(a')[i], a.value)), 1:length(f))',
   #)
