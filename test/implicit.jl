@@ -51,7 +51,7 @@ DD = SAD.DenseDiffZygote
     kron(Dpz', Matrix(I, length(x), length(x))) * Dpzk +
     kron(Dpz', Matrix(I, length(x), length(x))) * Dzzk * Dpz
 
-  global Dppz2 = reduce(
+  global Dppz2 = _reduce(
     vcat,
     [
       -(Dzk \ lhs[(1 + (i - 1) * length(x)):(i * length(x)), :])

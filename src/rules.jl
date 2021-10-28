@@ -188,7 +188,7 @@ end Function[function (cache, a)
   elseif ndims(a) == 2
     m, n = size(a)
     Ja = collect(1:(m * n))
-    Ia = reduce(vcat, map(i -> (1:n:length(a)) .+ (i - 1), 1:n))
+    Ia = _reduce(vcat, map(i -> (1:n:length(a)) .+ (i - 1), 1:n))
     Va = ones(length(a))
     return sparse(Ia, Ja, Va, length(a), length(a))
   else
@@ -345,7 +345,7 @@ end [
         off .+ (1:n:(n * size(a, 1))) .+ ((n * size(a, 1)) * (j - 1) + j - 1)
         for j in 1:n
       ]
-      append!(I, reduce(vcat, indices))
+      append!(I, _reduce(vcat, indices))
       append!(V, repeat(b.nzval; inner = size(a, 1)))
     end
     return sparse(I, J, V, length(a) * n^2, length(a))
@@ -369,7 +369,7 @@ end [
         off1 .+ (1:size(b, 1)) .+ (j - 1) * size(b, 1) * n
         for j in 1:size(b, 2)
       ]
-      append!(I, reduce(vcat, indices))
+      append!(I, _reduce(vcat, indices))
       append!(V, a.nzval[i] * ones(length(b)))
     end
     return sparse(I, J, V, length(b) * n^2, length(b))
@@ -377,7 +377,6 @@ end [
 ]
 ##$#############################################################################
 ##^# reduce operator ###########################################################
-import Base: reduce
 
 function reduce_hcat_jacobian(
   i::Int,
@@ -412,7 +411,7 @@ function reduce_vcat_jacobian(
   arg = arg_list[i]
   m, n = size(arg, 1), size(arg, 2)
   I =
-    reduce(vcat, [(1:m) .+ idxshift .+ (j - 1) * csizesum[1][end] for j in 1:n])
+    _reduce(vcat, [(1:m) .+ idxshift .+ (j - 1) * csizesum[1][end] for j in 1:n])
   J = collect(1:n)
   V = ones(T, n)
   return sparse(I, J, V, clengthsum[end], n)
@@ -425,7 +424,12 @@ if !@isdefined reduce_df_map
   )
 end
 
-function reduce(
+
+function _reduce(f::Any, arg_list::Any)
+  reduce(f, arg_list) # call Base.reduce
+end
+
+function _reduce(
   f::Function,
   arg_list::Vector{Union{Tensor{T},AbstractArray{T},T,Real}},
 ) where {T}
@@ -435,7 +439,7 @@ function reduce(
   ALIAS_IDX += 1
 
   cache = Dict{Union{Symbol,String},Union{<:Real,AbstractArray{<:Real}}}()
-  value = reduce(f, [isa(arg, Tensor) ? arg.value : arg for arg in arg_list])
+  value = _reduce(f, [isa(arg, Tensor) ? arg.value : arg for arg in arg_list])
   #cache["csizesum"] = (
   #  cumsum(size(arg, 1) for arg in arg_list),
   #  cumsum(size(arg, 2) for arg in arg_list),
