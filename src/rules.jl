@@ -286,7 +286,13 @@ end [
     elseif length(a) == 1
       return reshape(b, :, 1)
     else
-      return kron(b', sparse(I, size(a, 1), size(a, 1)))
+      if ndims(b) == 1 && !isa(b, Adjoint)
+        # we use a workaround here, k
+        return kron(b, sparse(I, size(a, 1), size(a, 1)))' 
+      else
+        return kron(b', sparse(I, size(a, 1), size(a, 1)))
+      end
+      #return kron(b', sparse(I, size(a, 1), size(a, 1)))
     end
   end,
   function (cache, a, b)
