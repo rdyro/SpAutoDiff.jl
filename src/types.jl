@@ -32,6 +32,7 @@ function display(t::Tensor)
   #println(t)
   #println("with value:")
   println("Tensor with value:")
+  flush(stdout)
   display(t.value)
   return
 end
